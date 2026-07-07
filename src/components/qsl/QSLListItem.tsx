@@ -48,10 +48,10 @@ export function QSLListItem({ card, showActions = true }: QSLListItemProps) {
             <span className="text-gray-400 text-sm">→</span>
             <span className="font-medium text-gray-700">{card.toCallsign}</span>
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-gray-500 mt-0.5 truncate">
             {card.date} · {card.utc} UTC · {card.mhz} MHz · {card.mode}
           </p>
-          <p className="text-xs text-gray-400">{card.fromCountry}</p>
+          <p className="text-xs text-gray-400 hidden sm:block">{card.fromCountry}</p>
         </div>
 
         <div className="flex flex-col items-end gap-1">
@@ -82,11 +82,11 @@ export function QSLStatCard({ label, value, highlight }: QSLStatCardProps) {
   return (
     <div
       className={cn(
-        "rounded-xl p-3 text-center",
+        "rounded-xl p-2.5 sm:p-3 text-center",
         highlight ? "gradient-purple text-white" : "bg-white border border-gray-100"
       )}
     >
-      <p className={cn("text-2xl font-bold", !highlight && "text-ham-purple")}>{value}</p>
+      <p className={cn("text-xl sm:text-2xl font-bold", !highlight && "text-ham-purple")}>{value}</p>
       <p className={cn("text-xs mt-0.5", highlight ? "text-white/70" : "text-gray-500")}>
         {label}
       </p>

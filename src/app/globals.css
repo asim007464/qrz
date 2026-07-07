@@ -36,8 +36,15 @@
 }
 
 @layer base {
+  html {
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-gray-50 text-gray-900 antialiased;
+    overflow-x: hidden;
+    min-height: 100dvh;
   }
 
   .admin-shell body,
@@ -45,6 +52,12 @@
   body:has(.contact-page) {
     background: var(--bg);
     color: var(--text);
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
   }
 }
 
@@ -63,6 +76,33 @@
 
   .qsl-text-shadow {
     text-shadow: 2px 2px 0 #f5e6c8;
+  }
+
+  .safe-area-pt {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .app-main-pb {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  @media (min-width: 768px) {
+    .app-main-pb {
+      padding-bottom: 0;
+    }
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -147,7 +187,7 @@
   padding: 24px 16px;
   background: linear-gradient(160deg, var(--ham-purple) 0%, #1f1230 55%, #0f0a18 100%);
 }
-.auth-card { max-width: 420px; width: 100%; padding: 32px; }
+.auth-card { max-width: 420px; width: 100%; padding: clamp(20px, 5vw, 32px); }
 .auth-header { text-align: center; margin-bottom: 24px; }
 .auth-header h1 { margin: 16px 0 6px; font-size: 20px; color: var(--text); }
 .auth-form { display: flex; flex-direction: column; gap: 16px; }
@@ -373,4 +413,24 @@
 
 @media (max-width: 1023px) {
   .admin-main { padding: 16px; }
+}
+
+@media (max-width: 640px) {
+  .admin-page-head { flex-direction: column; align-items: stretch; }
+  .admin-stats, .admin-stats--rich { grid-template-columns: 1fr 1fr; }
+  .admin-stat--card strong { font-size: 22px; }
+  .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px; }
+  .admin-table { min-width: 560px; }
+  .admin-filters { flex-direction: column; }
+  .admin-filter-input { min-width: 0; width: 100%; }
+  .auth-otp { font-size: 20px; letter-spacing: 0.25em; }
+  .contact-page { padding: 20px 12px 40px; }
+  .contact-card { padding: 20px; }
+  .toast {
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    transform: none;
+    max-width: none;
+  }
 }

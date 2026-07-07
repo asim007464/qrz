@@ -132,7 +132,7 @@ export default function LoginPage() {
           <div className="auth-header">
             <BrandMark link={false} size="auth" />
             <h1>Sign In To QRZ</h1>
-            <p className="section-sub">Connect with ham radio operators worldwide</p>
+            <p className="section-sub">Sign in to access the ham radio social network. New users must register first.</p>
           </div>
 
           {verified && (
@@ -220,7 +220,10 @@ export default function LoginPage() {
             </Link>
           </p>
           <p className="auth-footer-link" style={{ marginTop: 12 }}>
-            <Link href="/">← Back to QRZ</Link>
+            New to QRZ?{" "}
+            <Link href={redirectTo === "/" ? "/register" : `/register?next=${encodeURIComponent(redirectTo)}`}>
+              Create a free account
+            </Link>
           </p>
         </div>
       </div>

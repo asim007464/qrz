@@ -46,7 +46,7 @@ function StatCard({
 export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-3 gap-3 md:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
         <StatCard label="Views" value={data.views} change={data.viewsChange} />
         <StatCard label="Clicks" value={data.clicks} change={data.clicksChange} />
         <StatCard label="Shares" value={data.shares} change={data.sharesChange} />
@@ -105,10 +105,10 @@ export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
           {data.recentActivity.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0"
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 py-2 border-b border-gray-50 last:border-0"
             >
               <p className="text-sm text-gray-700">{item.message}</p>
-              <span className="text-xs text-gray-400 shrink-0 ml-4">{item.timestamp}</span>
+              <span className="text-xs text-gray-400 shrink-0">{item.timestamp}</span>
             </div>
           ))}
         </div>

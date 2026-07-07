@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Bot } from "lucide-react";
+import { Bot } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ProfileBanner } from "@/components/layout/ProfileBanner";
 import { ActivityFeed } from "@/components/home/ActivityFeed";
@@ -10,16 +10,6 @@ import { currentUser, activities } from "@/lib/mock-data";
 export default function HomePage() {
   return (
     <AppShell>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-ham-purple md:hidden">QRZ</h1>
-        <Link
-          href="/search"
-          className="p-2.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
-        >
-          <Search className="w-5 h-5 text-gray-600" />
-        </Link>
-      </div>
-
       <ProfileBanner user={currentUser} className="mb-4" />
 
       <ActivityFeed activities={activities} />
@@ -39,7 +29,7 @@ export default function HomePage() {
         </div>
       </Card>
 
-      <Card className="mt-4 flex items-center gap-3">
+      <Card className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="w-10 h-10 rounded-full gradient-purple flex items-center justify-center shrink-0">
           <Bot className="w-5 h-5 text-white" />
         </div>
@@ -47,8 +37,8 @@ export default function HomePage() {
           <p className="font-semibold text-sm text-ham-purple">AI Assistant</p>
           <p className="text-xs text-gray-500">Ask about bands, propagation, or QSL info</p>
         </div>
-        <Link href="/contact">
-          <Button size="sm" variant="outline">Chat</Button>
+        <Link href="/contact" className="w-full sm:w-auto">
+          <Button size="sm" variant="outline" className="w-full sm:w-auto">Chat</Button>
         </Link>
       </Card>
     </AppShell>

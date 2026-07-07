@@ -35,8 +35,8 @@ export function ProfileBanner({
       )}
       style={bgStyle}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3 md:gap-4">
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-3 md:gap-4 min-w-0 w-full sm:w-auto">
           <div className="relative">
             <Image
               src={user.avatar}
@@ -55,14 +55,14 @@ export function ProfileBanner({
               </span>
             )}
           </div>
-          <div>
-            <h2 className={cn("font-bold tracking-wide", compact ? "text-xl" : "text-2xl md:text-3xl")}>
+          <div className="min-w-0 flex-1">
+            <h2 className={cn("font-bold tracking-wide truncate", compact ? "text-lg sm:text-xl" : "text-xl sm:text-2xl md:text-3xl")}>
               {user.callsign}
             </h2>
-            <p className="text-white/80 text-sm">{user.name}</p>
-            <div className="flex items-center gap-1 mt-1 text-white/70 text-xs md:text-sm">
-              <Globe className="w-3.5 h-3.5" />
-              {user.location}
+            <p className="text-white/80 text-sm truncate">{user.name}</p>
+            <div className="flex items-center gap-1 mt-1 text-white/70 text-xs md:text-sm min-w-0">
+              <Globe className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{user.location}</span>
             </div>
           </div>
         </div>
@@ -78,8 +78,8 @@ export function ProfileBanner({
       </div>
 
       {!compact && (
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <div className="flex gap-2">
+        <div className="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
+          <div className="flex gap-2 flex-wrap">
             {Object.entries(user.socialLinks).slice(0, 4).map(([key]) => (
               <span
                 key={key}
@@ -89,7 +89,7 @@ export function ProfileBanner({
               </span>
             ))}
           </div>
-          <div className="flex gap-2 ml-auto">
+          <div className="flex gap-2 sm:ml-auto flex-wrap">
             <Badge variant="default" className="bg-white/15 text-white border-0">
               {user.cardsReceived} QSLs
             </Badge>

@@ -63,14 +63,14 @@ export default function QSLWalletPage() {
         }
       />
 
-      <div className="grid grid-cols-4 gap-2 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
         <QSLStatCard label="Total" value={qslCards.length} />
         <QSLStatCard label="Sent" value={tabs[1].count ?? 0} />
         <QSLStatCard label="Received" value={tabs[2].count ?? 0} />
         <QSLStatCard label="New" value={qslCards.filter((c) => c.status === "pending").length} highlight />
       </div>
 
-      <div className="flex justify-around mb-4 bg-white rounded-2xl p-3 card-shadow border border-gray-100">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 bg-white rounded-2xl p-3 card-shadow border border-gray-100">
         {quickActions.map((item) => (
           <button
             key={item.label}

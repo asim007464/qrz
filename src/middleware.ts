@@ -1,12 +1,8 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getSafeRedirectPath } from "@/lib/authRedirect";
+import { isAuthPublicPath, isLockdownBypass } from "@/lib/authPaths";
 import { DEFAULT_LOCKDOWN, type LockdownSettings } from "@/lib/siteSettings";
-
-const LOCKDOWN_BYPASS = ["/maintenance", "/admin", "/login", "/register", "/forgot-password", "/auth/", "/api/"];
-
-function isBypass(pathname: string) {
-  return LOCKDOWN_BYPASS.some((p) => pathname === p || pathname.startsWith(p));
-}
 
 async function getLockdownEnabled(supabase: ReturnType<typeof createServerClient>): Promise<boolean> {
   try {
@@ -38,8 +34,9 @@ export async function middleware(request: NextRequest) {
   );
 
   const { pathname } = request.nextUrl;
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!isBypass(pathname)) {
+  if (!isLockdownBypass(pathname)) {
     const locked = await getLockdownEnabled(supabase);
     if (locked && pathname !== "/maintenance") {
       return NextResponse.redirect(new URL("/maintenance", request.url));
@@ -49,6 +46,17 @@ export async function middleware(request: NextRequest) {
   if (pathname === "/maintenance") {
     const locked = await getLockdownEnabled(supabase);
     if (!locked) return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  if (user && isAuthPublicPath(pathname)) {
+    const next = request.nextUrl.searchParams.get("next");
+    return NextResponse.redirect(new URL(getSafeRedirectPath(next), request.url));
+  }
+
+  if (!user && !isLockdownBypass(pathname)) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("next", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return response;

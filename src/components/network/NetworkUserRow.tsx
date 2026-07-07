@@ -14,8 +14,9 @@ type NetworkUserRowProps = {
 
 export function NetworkUserRow({ user, showActions = true }: NetworkUserRowProps) {
   return (
-    <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-      <Link href={`/profile/${user.callsign}`} className="shrink-0">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <Link href={`/profile/${user.callsign}`} className="shrink-0">
         <Image
           src={user.avatar}
           alt={user.callsign}
@@ -36,8 +37,9 @@ export function NetworkUserRow({ user, showActions = true }: NetworkUserRowProps
           {user.callsign} · Added {user.connectedAt}
         </p>
       </div>
+      </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 sm:shrink-0 pl-[60px] sm:pl-0">
         {user.status === "request" && showActions && (
           <>
             <Button size="sm" variant="primary">Accept</Button>

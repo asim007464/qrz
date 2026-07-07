@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   title: "QRZ — Ham Radio Social Network",
   description:
     "QRZ is the social networking platform for ham radio enthusiasts. Share QSL cards, connect with operators worldwide.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

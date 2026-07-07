@@ -78,7 +78,7 @@ export default function AdminUsersPage() {
       </div>
 
       {data && (
-        <div className="panel" style={{ overflow: "auto" }}>
+        <div className="panel admin-table-wrap">
           <table className="admin-table">
             <thead>
               <tr>

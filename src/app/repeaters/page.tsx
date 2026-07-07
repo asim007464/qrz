@@ -6,11 +6,14 @@ import { ExternalLink, MapPin, Radio, Search } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import type { OpenRepeaterItem } from "@/lib/openRepeater";
 import { OPENREPEATER_SITE } from "@/lib/openRepeater";
+
+function repeaterDetailHref(callsign: string) {
+  return `${OPENREPEATER_SITE}/repeater/${encodeURIComponent(callsign.trim().toLowerCase())}`;
+}
 
 export default function RepeatersPage() {
   const [repeaters, setRepeaters] = useState<OpenRepeaterItem[]>([]);
@@ -45,24 +48,11 @@ export default function RepeatersPage() {
 
   return (
     <AppShell>
-      <PageHeader
-        title="Repeaters"
-        backHref="/"
-        action={
-          <a
-            href={`${OPENREPEATER_SITE}/add`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs font-medium text-ham-accent hover:underline flex items-center gap-1"
-          >
-            Add <ExternalLink className="w-3 h-3" />
-          </a>
-        }
-      />
+      <PageHeader title="Repeaters" backHref="/" />
 
       <Card className="mb-4 space-y-3">
-        <div className="flex gap-2">
-          <div className="flex-1 relative">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex-1 relative min-w-0">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="search"
@@ -73,13 +63,13 @@ export default function RepeatersPage() {
               className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-ham-accent focus:outline-none focus:ring-2 focus:ring-ham-accent/20"
             />
           </div>
-          <Button onClick={load}>Search</Button>
+          <Button onClick={load} className="w-full sm:w-auto shrink-0">Search</Button>
         </div>
         <div className="flex flex-wrap gap-2">
           <select
             value={band}
             onChange={(e) => setBand(e.target.value)}
-            className="rounded-xl border border-gray-200 px-3 py-2 text-sm"
+            className="flex-1 sm:flex-none min-w-0 rounded-xl border border-gray-200 px-3 py-2 text-sm"
           >
             <option value="">All bands</option>
             {["2m", "70cm", "6m", "10m", "23cm", "33cm"].map((b) => (
@@ -89,7 +79,7 @@ export default function RepeatersPage() {
           <select
             value={mode}
             onChange={(e) => setMode(e.target.value)}
-            className="rounded-xl border border-gray-200 px-3 py-2 text-sm"
+            className="flex-1 sm:flex-none min-w-0 rounded-xl border border-gray-200 px-3 py-2 text-sm"
           >
             <option value="">All modes</option>
             {["FM", "DMR", "D-Star", "Fusion", "YSF", "P25", "NXDN"].map((m) => (
@@ -98,12 +88,12 @@ export default function RepeatersPage() {
           </select>
         </div>
         <p className="text-xs text-gray-500">
-          Data from{" "}
-          <a href={OPENREPEATER_SITE} target="_blank" rel="noopener noreferrer" className="text-ham-accent hover:underline">
-            Open Repeater
+          {total > 0 ? `${total.toLocaleString()} repeaters` : "Repeater list"}
+          {" · "}
+          <a href={OPENREPEATER_SITE} target="_blank" rel="noopener noreferrer" className="text-ham-accent hover:underline inline-flex items-center gap-0.5">
+            Open Repeater <ExternalLink className="w-3 h-3" />
           </a>
           {source ? ` · ${source}` : ""}
-          {total > 0 ? ` · ${total} repeaters` : ""}
         </p>
       </Card>
 
@@ -112,48 +102,72 @@ export default function RepeatersPage() {
       ) : repeaters.length === 0 ? (
         <Card className="text-center py-12">
           <Radio className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-600 mb-2">No repeaters found.</p>
+          <p className="text-gray-600 mb-2">No repeaters in the list yet.</p>
           <p className="text-sm text-gray-500 mb-4">
-            Try a different search, or add a repeater on Open Repeater.
+            Browse the full directory or add a repeater on Open Repeater.
           </p>
-          <a href={`${OPENREPEATER_SITE}/add`} target="_blank" rel="noopener noreferrer">
-            <Button>Add on Open Repeater</Button>
-          </a>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <a href={`${OPENREPEATER_SITE}/search`} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline">Search on Open Repeater</Button>
+            </a>
+            <a href={`${OPENREPEATER_SITE}/add`} target="_blank" rel="noopener noreferrer">
+              <Button>Add Repeater</Button>
+            </a>
+          </div>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <ul className="space-y-2" role="list">
           {repeaters.map((r) => (
-            <Card key={r.id || r.callsign} className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-bold text-ham-purple text-lg">{r.callsign}</h3>
-                  <Badge variant={r.status === "active" ? "success" : "default"}>{r.band}</Badge>
-                  <Badge>{r.mode}</Badge>
-                </div>
-                <p className="text-sm text-gray-600 mt-1 flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 shrink-0" />
-                  {[r.city, r.country].filter(Boolean).join(", ") || "—"}
-                </p>
-                <p className="text-sm text-gray-500 mt-1">
-                  {r.frequency ? `${r.frequency} MHz` : "—"}
-                  {r.offset != null ? ` · offset ${r.offset}` : ""}
-                  {r.coverage_km ? ` · ${r.coverage_km} km` : ""}
-                </p>
-                {r.owner && <p className="text-xs text-gray-400 mt-1">Owner: {r.owner}</p>}
-              </div>
-              {r.website && (
-                <a
-                  href={r.website.startsWith("http") ? r.website : `https://${r.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0"
-                >
-                  <Button variant="outline" size="sm">Website</Button>
-                </a>
-              )}
-            </Card>
+            <li key={r.id || r.callsign}>
+              <a
+                href={repeaterDetailHref(r.callsign)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <Card className="flex flex-col sm:flex-row sm:items-center gap-3 hover:border-ham-accent/40 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-bold text-ham-purple text-lg">{r.callsign}</h3>
+                      <Badge variant={r.status === "active" ? "success" : "default"}>
+                        {r.status === "active" ? "Active" : "Inactive"}
+                      </Badge>
+                      <Badge>{r.band}</Badge>
+                      <Badge>{r.mode}</Badge>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1 flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 shrink-0" />
+                      {[r.city, r.country].filter(Boolean).join(", ") || "—"}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {r.frequency != null ? `${r.frequency} MHz` : "—"}
+                      {r.offset != null ? ` · offset ${r.offset} kHz` : ""}
+                      {r.ctcss != null ? ` · ${r.ctcss} Hz` : ""}
+                      {r.coverage_km ? ` · ${r.coverage_km} km` : ""}
+                    </p>
+                    {r.owner && <p className="text-xs text-gray-400 mt-1">Owner: {r.owner}</p>}
+                  </div>
+                  <span className="shrink-0 text-xs font-medium text-ham-accent flex items-center gap-1">
+                    View on Open Repeater <ExternalLink className="w-3.5 h-3.5" />
+                  </span>
+                </Card>
+              </a>
+            </li>
           ))}
-        </div>
+        </ul>
+      )}
+
+      {!loading && repeaters.length > 0 && (
+        <p className="text-center text-sm text-gray-500 mt-6">
+          <a
+            href={`${OPENREPEATER_SITE}/search`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ham-accent hover:underline inline-flex items-center gap-1"
+          >
+            View full repeater directory on Open Repeater <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </p>
       )}
     </AppShell>
   );

@@ -29,9 +29,9 @@ export default async function ProfilePage({ params }: Props) {
       <ProfileBanner user={user} className="mb-4" />
 
       {!isOwnProfile && (
-        <div className="flex gap-2 mb-4">
-          <ConnectButton callsign={user.callsign} />
-          <Link href="/qsl/send" className="flex-1">
+        <div className="flex flex-col sm:flex-row gap-2 mb-4">
+          <ConnectButton callsign={user.callsign} className="sm:flex-1" />
+          <Link href="/qsl/send" className="sm:flex-1">
             <Button variant="outline" className="w-full flex items-center justify-center gap-2">
               <Send className="w-4 h-4" />
               Send QSL

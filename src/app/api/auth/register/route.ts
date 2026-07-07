@@ -8,10 +8,7 @@ import { enforceRateLimit } from "@/lib/rateLimit";
 import { NextResponse } from "next/server";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function placeholderCallsign(userId: string) {
-  return `U${userId.replace(/-/g, "").slice(0, 11).toUpperCase()}`;
-}
+const CALLSIGN_RE = /^[A-Z0-9/\-]{3,12}$/i;
 
 export async function POST(request: Request) {
   try {
@@ -20,11 +17,18 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const displayName = String(body.displayName ?? "").trim();
+    const callsign = String(body.callsign ?? "").trim().toUpperCase();
     const email = String(body.email ?? "").trim().toLowerCase();
     const password = String(body.password ?? "");
 
     if (!displayName) {
       return NextResponse.json({ error: "Display name is required." }, { status: 400 });
+    }
+    if (!callsign) {
+      return NextResponse.json({ error: "Callsign is required." }, { status: 400 });
+    }
+    if (!CALLSIGN_RE.test(callsign)) {
+      return NextResponse.json({ error: "Enter a valid callsign (3–12 characters)." }, { status: 400 });
     }
     if (!EMAIL_RE.test(email)) {
       return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
@@ -37,6 +41,17 @@ export async function POST(request: Request) {
     }
 
     const supabase = createAdminClient();
+
+    const { data: existingCallsign } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("callsign", callsign)
+      .maybeSingle();
+
+    if (existingCallsign) {
+      return NextResponse.json({ error: "This callsign is already registered." }, { status: 409 });
+    }
+
     const redirectTo = getAuthCallbackUrl();
     const role = resolveUserRole(email);
 
@@ -46,7 +61,7 @@ export async function POST(request: Request) {
       password,
       options: {
         redirectTo,
-        data: { display_name: displayName },
+        data: { display_name: displayName, callsign },
       },
     });
 
@@ -69,8 +84,6 @@ export async function POST(request: Request) {
     if (unconfirmError) {
       console.error("Unconfirm email error:", unconfirmError);
     }
-
-    const callsign = placeholderCallsign(userId);
 
     const { error: profileError } = await supabase.from("profiles").upsert({
       id: userId,

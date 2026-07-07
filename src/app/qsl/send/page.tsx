@@ -174,11 +174,11 @@ export default function SendQSLPage() {
           <Card className="space-y-3">
             <h3 className="font-semibold text-ham-purple">QSO Details</h3>
             <Input label="To Callsign" placeholder="e.g. DL9XX" value={form.toCallsign} onChange={(e) => setForm({ ...form, toCallsign: e.target.value.toUpperCase() })} />
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input label="Date" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
               <Input label="UTC Time" placeholder="14:32" value={form.utc} onChange={(e) => setForm({ ...form, utc: e.target.value })} />
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <Input label="MHz" placeholder="14.230" value={form.mhz} onChange={(e) => setForm({ ...form, mhz: e.target.value })} />
               <Input label="Mode" placeholder="FT8" value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })} />
               <Input label="RST" placeholder="599" value={form.rst} onChange={(e) => setForm({ ...form, rst: e.target.value })} />
@@ -194,7 +194,7 @@ export default function SendQSLPage() {
           <Button size="lg" onClick={send} disabled={sending}>{sending ? "Sending…" : "Send QSL Card"}</Button>
         </div>
 
-        <div className="order-1 lg:order-2 lg:sticky lg:top-6">
+        <div className="order-1 lg:order-2 lg:sticky lg:top-6 max-w-md mx-auto lg:max-w-none w-full">
           <p className="text-sm font-medium text-gray-500 mb-3 text-center">Preview</p>
           <QSLCardTemplate card={cardData} template={uiTemplate} editable />
         </div>

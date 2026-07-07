@@ -145,8 +145,8 @@ export default function EditProfilePage() {
           />
         </Card>
 
-        <div className="flex gap-3 pb-4">
-          <Button size="lg" className="flex-1" onClick={save} disabled={saving}>
+        <div className="flex flex-col sm:flex-row gap-3 pb-4">
+          <Button size="lg" className="flex-1 w-full" onClick={save} disabled={saving}>
             {saved ? "Saved!" : saving ? "Saving…" : "Save Changes"}
           </Button>
           <Link href="/menu" className="flex-1">
