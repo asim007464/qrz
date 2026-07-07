@@ -1,21 +1,23 @@
+import Link from "next/link";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
-import { Bell, Moon, Shield, Globe, ChevronRight } from "lucide-react";
+import { Bell, Moon, Shield, Globe, ChevronRight, UserPen } from "lucide-react";
 
 const settingsGroups = [
   {
     title: "Account",
     items: [
-      { icon: Bell, label: "Notifications", desc: "Push and email alerts" },
-      { icon: Moon, label: "Appearance", desc: "Theme and display" },
-      { icon: Shield, label: "Privacy", desc: "Who can see your profile" },
+      { icon: UserPen, label: "Edit Profile", desc: "Callsign, bio, station info", href: "/profile/edit" },
+      { icon: Bell, label: "Notifications", desc: "Contact support for alerts", href: "/contact" },
+      { icon: Moon, label: "Appearance", desc: "Purple theme (default)", href: "/menu" },
+      { icon: Shield, label: "Privacy", desc: "Manage your profile visibility", href: "/profile/edit" },
     ],
   },
   {
     title: "Preferences",
     items: [
-      { icon: Globe, label: "Language & Region", desc: "English (US)" },
+      { icon: Globe, label: "Language & Region", desc: "English (US)", href: "/menu" },
     ],
   },
 ];
@@ -32,8 +34,9 @@ export default function SettingsPage() {
           </h3>
           <Card padding={false} className="overflow-hidden divide-y divide-gray-50">
             {group.items.map((item) => (
-              <button
+              <Link
                 key={item.label}
+                href={item.href}
                 className="flex items-center gap-3 w-full px-4 py-3.5 hover:bg-gray-50 transition-colors text-left"
               >
                 <item.icon className="w-5 h-5 text-ham-purple shrink-0" />
@@ -42,7 +45,7 @@ export default function SettingsPage() {
                   <p className="text-xs text-gray-400">{item.desc}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-300" />
-              </button>
+              </Link>
             ))}
           </Card>
         </div>

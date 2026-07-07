@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Share2, Eye } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
@@ -7,6 +9,7 @@ import { SocialLinkButtons } from "@/components/profile/SocialLinks";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { currentUser } from "@/lib/mock-data";
+import { useAuth } from "@/hooks/useAuth";
 
 function InfoSection({ title, content }: { title: string; content: string }) {
   return (
@@ -18,12 +21,24 @@ function InfoSection({ title, content }: { title: string; content: string }) {
 }
 
 export default function DigitalCardPage() {
-  const user = currentUser;
+  const { profile } = useAuth();
+  const user = profile
+    ? { ...currentUser, callsign: profile.callsign || currentUser.callsign, name: profile.name || currentUser.name }
+    : currentUser;
+
+  const shareCard = async () => {
+    const url = `${window.location.origin}/profile/${user.callsign}`;
+    if (navigator.share) {
+      await navigator.share({ title: `${user.callsign} on QRZ`, url });
+    } else {
+      await navigator.clipboard.writeText(url);
+      alert("Profile link copied to clipboard!");
+    }
+  };
 
   return (
     <AppShell>
       <PageHeader title="My Digital Card" backHref="/menu" />
-
       <ProfileBanner user={user} className="mb-4" />
 
       <div className="space-y-3 mb-6">
@@ -43,7 +58,7 @@ export default function DigitalCardPage() {
 
         <Card>
           <h3 className="font-semibold text-ham-purple mb-3">Social Links</h3>
-          <SocialLinkButtons />
+          <SocialLinkButtons links={user.socialLinks} />
         </Card>
 
         <Card>
@@ -62,12 +77,12 @@ export default function DigitalCardPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <Button size="lg" className="flex items-center justify-center gap-2">
+        <Button size="lg" className="flex items-center justify-center gap-2" onClick={shareCard}>
           <Share2 className="w-4 h-4" />
           Share My Card
         </Button>
         <Link href={`/profile/${user.callsign}`} className="flex-1">
-          <Button size="lg" variant="outline" className="flex items-center justify-center gap-2">
+          <Button size="lg" variant="outline" className="w-full flex items-center justify-center gap-2">
             <Eye className="w-4 h-4" />
             Preview Card
           </Button>

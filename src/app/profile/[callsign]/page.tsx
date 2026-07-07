@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Send, UserPlus, Eye, Search } from "lucide-react";
+import { UserPlus, Send, Eye, Search } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { ProfileBanner } from "@/components/layout/ProfileBanner";
 import { SocialLinkButtons } from "@/components/profile/SocialLinks";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { ConnectButton } from "@/components/network/ConnectButton";
 import { getUserByCallsign } from "@/lib/mock-data";
 
 type Props = {
@@ -29,10 +30,7 @@ export default async function ProfilePage({ params }: Props) {
 
       {!isOwnProfile && (
         <div className="flex gap-2 mb-4">
-          <Button className="flex-1 flex items-center justify-center gap-2">
-            <UserPlus className="w-4 h-4" />
-            Connect
-          </Button>
+          <ConnectButton callsign={user.callsign} />
           <Link href="/qsl/send" className="flex-1">
             <Button variant="outline" className="w-full flex items-center justify-center gap-2">
               <Send className="w-4 h-4" />
@@ -106,7 +104,7 @@ export default async function ProfilePage({ params }: Props) {
 
         <Card>
           <h3 className="font-semibold text-ham-purple mb-3">Social Links</h3>
-          <SocialLinkButtons size="sm" />
+          <SocialLinkButtons size="sm" links={user.socialLinks} />
         </Card>
       </div>
     </AppShell>

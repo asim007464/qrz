@@ -31,13 +31,11 @@ export default function HomePage() {
           <p className="text-sm text-white/70 mt-1">
             Join operators from across the country for workshops, demos, and DX sessions.
           </p>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="mt-3 bg-white/20 hover:bg-white/30 border-0"
-          >
-            View Details
-          </Button>
+          <Link href="/contact">
+            <Button variant="secondary" size="sm" className="mt-3 bg-white/20 hover:bg-white/30 border-0">
+              View Details
+            </Button>
+          </Link>
         </div>
       </Card>
 
@@ -49,7 +47,9 @@ export default function HomePage() {
           <p className="font-semibold text-sm text-ham-purple">AI Assistant</p>
           <p className="text-xs text-gray-500">Ask about bands, propagation, or QSL info</p>
         </div>
-        <Button size="sm" variant="outline">Chat</Button>
+        <Link href="/contact">
+          <Button size="sm" variant="outline">Chat</Button>
+        </Link>
       </Card>
     </AppShell>
   );

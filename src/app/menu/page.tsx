@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
   UserPen,
   CreditCard,
-  Share2,
   Users,
   BarChart3,
   Settings,
@@ -14,6 +13,7 @@ import {
   ChevronRight,
   Shield,
   LogIn,
+  Radio,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ProfileBanner } from "@/components/layout/ProfileBanner";
@@ -24,6 +24,7 @@ import { currentUser } from "@/lib/mock-data";
 const menuItems = [
   { href: "/profile/edit", icon: UserPen, label: "Edit Profile" },
   { href: "/card", icon: CreditCard, label: "My Digital Card" },
+  { href: "/repeaters", icon: Radio, label: "Repeaters" },
   { href: "/network", icon: Users, label: "My Network" },
   { href: "/analytics", icon: BarChart3, label: "Analytics" },
   { href: "/contact", icon: HelpCircle, label: "Help & Support" },
