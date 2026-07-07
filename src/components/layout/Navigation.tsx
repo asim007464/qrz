@@ -17,7 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", icon: Home, label: "Home" },
+  { href: "/", label: "QRZ", isBrand: true },
   { href: "/card", icon: CreditCard, label: "Card" },
   { href: "/add", icon: Plus, label: "Add", isCenter: true },
   { href: "/qsl", icon: Wallet, label: "QSL" },
@@ -99,6 +99,30 @@ export function BottomNav() {
             );
           }
 
+          if ("isBrand" in item && item.isBrand) {
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-0.5 px-2 sm:px-3 py-1.5 rounded-xl transition-colors min-w-0 flex-1 max-w-[4.5rem]",
+                  isActive ? "text-ham-purple" : "text-gray-400"
+                )}
+                aria-label="QRZ Home"
+              >
+                <span
+                  className={cn(
+                    "text-[12px] sm:text-[13px] font-black tracking-[0.16em] leading-none",
+                    isActive ? "text-ham-purple" : "text-gray-500"
+                  )}
+                >
+                  QRZ
+                </span>
+              </Link>
+            );
+          }
+
+          const Icon = item.icon!;
           return (
             <Link
               key={item.href}
@@ -108,7 +132,7 @@ export function BottomNav() {
                 isActive ? "text-ham-purple" : "text-gray-400"
               )}
             >
-              <item.icon className="w-5 h-5 shrink-0" />
+              <Icon className="w-5 h-5 shrink-0" />
               <span className="text-[10px] font-medium truncate w-full text-center">{item.label}</span>
             </Link>
           );

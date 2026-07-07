@@ -5,9 +5,13 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "QRZ — Ham Radio Social Network",
+  title: {
+    default: "QRZ — Ham Radio Social Network",
+    template: "%s | QRZ",
+  },
   description:
     "QRZ is the social networking platform for ham radio enthusiasts. Share QSL cards, connect with operators worldwide.",
+  applicationName: "QRZ",
 };
 
 export const viewport: Viewport = {

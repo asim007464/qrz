@@ -1,3 +1,6 @@
+/** App pages guests can browse without signing in. */
+export const GUEST_ACCESSIBLE_PATHS = ["/"] as const;
+
 /** Routes reachable without a session (auth flows + APIs). */
 export const AUTH_PUBLIC_PATHS = [
   "/login",
@@ -14,6 +17,10 @@ export const LOCKDOWN_BYPASS_PREFIXES = [
   ...AUTH_PUBLIC_PREFIXES,
   "/api/",
 ] as const;
+
+export function isGuestAccessiblePath(pathname: string): boolean {
+  return GUEST_ACCESSIBLE_PATHS.some((p) => pathname === p);
+}
 
 export function isAuthPublicPath(pathname: string): boolean {
   if (AUTH_PUBLIC_PATHS.some((p) => pathname === p)) return true;
