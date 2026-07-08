@@ -24,6 +24,12 @@ export type UserProfile = {
   onAir: boolean;
   socialLinks: SocialLinks;
   backgroundImage?: string;
+  // Optional "Now operating" stats shown in the mobile app UI
+  activeBand?: string; // e.g. "20m"
+  activeFrequency?: string; // e.g. "14.240 MHz"
+  activeMode?: string; // e.g. "USB", "FT8"
+  cqZone?: string; // e.g. "22"
+  grid?: string; // e.g. "MK7QB"
   profileViews: number;
   profileSearches: number;
   cardsReceived: number;
@@ -74,6 +80,8 @@ export type NetworkUser = {
   location: string;
   connectedAt: string;
   status: "follower" | "following" | "request" | "connected";
+  // Optional distance used for "Nearby operators" UI
+  distanceKm?: number;
 };
 
 export type ActivityItem = {

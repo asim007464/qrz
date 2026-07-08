@@ -14,6 +14,7 @@ import {
   Shield,
   LogIn,
   Radio,
+  Download,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ProfileBanner } from "@/components/layout/ProfileBanner";
@@ -27,6 +28,7 @@ const menuItems = [
   { href: "/repeaters", icon: Radio, label: "Repeaters" },
   { href: "/network", icon: Users, label: "My Network" },
   { href: "/analytics", icon: BarChart3, label: "Analytics" },
+  { href: "/download", icon: Download, label: "Download App" },
   { href: "/contact", icon: HelpCircle, label: "Help & Support" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];

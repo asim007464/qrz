@@ -23,6 +23,11 @@ export const currentUser: UserProfile = {
   email: "alex@example.com",
   phone: "+1 555-0123",
   onAir: true,
+  activeBand: "20m",
+  activeFrequency: "14.240 MHz",
+  activeMode: "USB",
+  cqZone: "CQ Zone 22",
+  grid: "MK7QB",
   socialLinks: {
     website: "https://k2abc.example.com",
     facebook: "https://facebook.com/k2abc",
@@ -231,6 +236,7 @@ export const networkUsers: NetworkUser[] = [
     location: "Germany",
     connectedAt: "2024-03-10",
     status: "follower",
+    distanceKm: 2.1,
   },
   {
     id: "3",
@@ -241,6 +247,7 @@ export const networkUsers: NetworkUser[] = [
     location: "Japan",
     connectedAt: "2024-02-15",
     status: "following",
+    distanceKm: 3.8,
   },
   {
     id: "4",
@@ -251,6 +258,7 @@ export const networkUsers: NetworkUser[] = [
     location: "United Kingdom",
     connectedAt: "2024-04-01",
     status: "connected",
+    distanceKm: 5.6,
   },
   {
     id: "5",
@@ -261,6 +269,7 @@ export const networkUsers: NetworkUser[] = [
     location: "Australia",
     connectedAt: "2024-05-22",
     status: "request",
+    distanceKm: 7.4,
   },
 ];
 

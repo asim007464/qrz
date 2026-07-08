@@ -13,6 +13,7 @@ import {
   BarChart3,
   UserPen,
   Radio,
+  Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -153,6 +154,7 @@ export function DesktopSidebar() {
     { href: "/qsl", icon: Wallet, label: "QSL Wallet" },
     { href: "/network", icon: Users, label: "My Network" },
     { href: "/analytics", icon: BarChart3, label: "Analytics" },
+    { href: "/download", icon: Download, label: "Download App" },
     { href: "/profile/edit", icon: UserPen, label: "Edit Profile" },
     { href: "/menu", icon: Settings, label: "Settings" },
   ];

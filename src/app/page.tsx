@@ -5,10 +5,12 @@ import { Bot } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ProfileBanner } from "@/components/layout/ProfileBanner";
 import { ActivityFeed } from "@/components/home/ActivityFeed";
+import { NearbyOperators } from "@/components/home/NearbyOperators";
+import { DownloadAppCard } from "@/components/home/DownloadAppCard";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
-import { currentUser, activities } from "@/lib/mock-data";
+import { currentUser, activities, networkUsers } from "@/lib/mock-data";
 
 export default function HomePage() {
   const { isLoggedIn, profile, loading } = useAuth();
@@ -48,7 +50,28 @@ export default function HomePage() {
         <ProfileBanner user={displayUser} className="mb-4" />
       )}
 
-      <ActivityFeed activities={activities} />
+      <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xs font-bold tracking-widest uppercase text-gray-600">
+              Activity feed
+            </h2>
+            <Link
+              href="/analytics"
+              className="text-xs text-ham-purple hover:underline"
+            >
+              See All
+            </Link>
+          </div>
+          <ActivityFeed activities={activities} />
+        </div>
+
+        <div className="lg:pl-1">
+          <NearbyOperators
+            operators={networkUsers.slice(0, 4).filter((u) => u.id !== displayUser.id)}
+          />
+        </div>
+      </div>
 
       <Card className="mt-4 overflow-hidden p-0">
         <div className="gradient-purple p-5 text-white">
@@ -65,20 +88,37 @@ export default function HomePage() {
         </div>
       </Card>
 
-      <Card className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
-        <div className="w-10 h-10 rounded-full gradient-purple flex items-center justify-center shrink-0">
-          <Bot className="w-5 h-5 text-white" />
+      <Card className="mt-4 overflow-hidden p-0">
+        <div className="bg-gradient-to-br from-ham-purple to-ham-accent p-5 text-white">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-widest opacity-80 flex items-center gap-2">
+                AI Assistant
+                <span className="bg-white/15 rounded-full px-2 py-0.5 text-[10px] font-black">
+                  BETA
+                </span>
+              </p>
+              <p className="text-sm text-white/85 mt-2">
+                Ask anything about ham radio, DX, propagation, equipment, and more.
+              </p>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+              <Bot className="w-6 h-6 text-white" />
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+            <p className="text-xs text-white/70">Beta UI · no real AI backend yet</p>
+            <Link href={isLoggedIn ? "/contact" : "/login?next=/contact"} className="sm:flex-1">
+              <Button size="md" variant="primary" className="w-full sm:w-auto bg-white text-ham-purple hover:bg-white/90 border-0">
+                Ask Now
+              </Button>
+            </Link>
+          </div>
         </div>
-        <div className="flex-1">
-          <p className="font-semibold text-sm text-ham-purple">AI Assistant</p>
-          <p className="text-xs text-gray-500">Ask about bands, propagation, or QSL info</p>
-        </div>
-        <Link href={isLoggedIn ? "/contact" : "/login?next=/contact"} className="w-full sm:w-auto">
-          <Button size="sm" variant="outline" className="w-full sm:w-auto">
-            Chat
-          </Button>
-        </Link>
       </Card>
+
+      <DownloadAppCard className="mt-4" />
     </AppShell>
   );
 }

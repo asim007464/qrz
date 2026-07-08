@@ -78,24 +78,55 @@ export function ProfileBanner({
       </div>
 
       {!compact && (
-        <div className="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
-          <div className="flex gap-2 flex-wrap">
-            {Object.entries(user.socialLinks).slice(0, 4).map(([key]) => (
-              <span
-                key={key}
-                className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-xs uppercase font-bold hover:bg-white/25 transition-colors cursor-pointer"
-              >
-                {key[0]}
-              </span>
-            ))}
+        <div className="mt-4">
+          {/* "Now operating" stats row (mobile-app style) */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white/10 rounded-xl p-3 text-center">
+              <p className="text-[10px] font-semibold text-white/70">Band</p>
+              <p className="text-sm font-bold">{user.activeBand || "20m"}</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-3 text-center">
+              <p className="text-[10px] font-semibold text-white/70">Frequency</p>
+              <p className="text-sm font-bold">{user.activeFrequency || "14.240 MHz"}</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-3 text-center">
+              <p className="text-[10px] font-semibold text-white/70">Mode</p>
+              <p className="text-sm font-bold">{user.activeMode || "USB"}</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-3 text-center">
+              <p className="text-[10px] font-semibold text-white/70">CQ Zone</p>
+              <p className="text-sm font-bold">{user.cqZone || "CQ Zone 22"}</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-3 text-center">
+              <p className="text-[10px] font-semibold text-white/70">ITU Zone</p>
+              <p className="text-sm font-bold">{user.ituZone}</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-3 text-center">
+              <p className="text-[10px] font-semibold text-white/70">Grid</p>
+              <p className="text-sm font-bold">{user.grid || "—"}</p>
+            </div>
           </div>
-          <div className="flex gap-2 sm:ml-auto flex-wrap">
-            <Badge variant="default" className="bg-white/15 text-white border-0">
-              {user.cardsReceived} QSLs
-            </Badge>
-            <Badge variant="default" className="bg-white/15 text-white border-0">
-              {user.profileViews} views
-            </Badge>
+
+          <div className="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
+            <div className="flex gap-2 flex-wrap">
+              {Object.entries(user.socialLinks).slice(0, 4).map(([key]) => (
+                <span
+                  key={key}
+                  className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-xs uppercase font-bold hover:bg-white/25 transition-colors cursor-pointer"
+                  title={key}
+                >
+                  {key[0]}
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2 sm:ml-auto flex-wrap">
+              <Badge variant="default" className="bg-white/15 text-white border-0">
+                {user.cardsReceived} QSLs
+              </Badge>
+              <Badge variant="default" className="bg-white/15 text-white border-0">
+                {user.profileViews} views
+              </Badge>
+            </div>
           </div>
         </div>
       )}
