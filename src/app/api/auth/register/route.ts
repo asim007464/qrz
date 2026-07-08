@@ -98,7 +98,26 @@ export async function POST(request: Request) {
       throw new Error("Account was created but profile setup failed. Please contact support.");
     }
 
-    await issueEmailVerificationOtp(supabase, email, displayName);
+    const otpResult = await issueEmailVerificationOtp(supabase, email, displayName);
+
+    // If SMTP is not configured or email delivery fails, allow the account to work anyway.
+    // This keeps signup usable on fresh deployments while email is being configured.
+    if (!otpResult.emailSent) {
+      const { error: confirmError } = await supabase.auth.admin.updateUserById(userId, {
+        email_confirm: true,
+      });
+      if (confirmError) {
+        console.error("Auto-confirm email error:", confirmError);
+      }
+
+      return NextResponse.json({
+        ok: true,
+        requiresVerification: false,
+        email,
+        message:
+          "Account created. Email delivery is not configured, so verification was skipped. You can sign in now.",
+      });
+    }
 
     return NextResponse.json({
       ok: true,

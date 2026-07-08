@@ -43,11 +43,13 @@ export async function POST(request: Request) {
     const displayName =
       (user.user_metadata?.display_name as string | undefined) || profile?.name || "there";
 
-    await issueEmailVerificationOtp(supabase, email, displayName);
+    const otpResult = await issueEmailVerificationOtp(supabase, email, displayName);
 
     return NextResponse.json({
       ok: true,
-      message: "A new 6-digit verification code was sent to your email.",
+      message: otpResult.emailSent
+        ? "A new 6-digit verification code was sent to your email."
+        : "We generated a new code but could not send email right now. Please try again later or contact support.",
     });
   } catch (err) {
     console.error("Resend verification error:", err);

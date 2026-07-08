@@ -1,5 +1,10 @@
 /** App pages guests can browse without signing in. */
-export const GUEST_ACCESSIBLE_PATHS = ["/"] as const;
+export const GUEST_ACCESSIBLE_PATHS = [
+  "/",
+  "/download",
+  "/download/android-apk",
+  "/download/ios-ipa",
+] as const;
 
 /** Routes reachable without a session (auth flows + APIs). */
 export const AUTH_PUBLIC_PATHS = [

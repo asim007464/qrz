@@ -40,8 +40,15 @@ export async function issueEmailVerificationOtp(supabase: SupabaseClient, email:
     expires_at: expiresAt,
   });
   if (insertError) throw new Error("Could not create verification code.");
-  await sendRegistrationOtpEmail({ to: email, displayName: displayName || "there", code });
-  return { ok: true as const };
+  try {
+    await sendRegistrationOtpEmail({ to: email, displayName: displayName || "there", code });
+    return { ok: true as const, emailSent: true as const };
+  } catch (err) {
+    // Email sending is an external dependency (SMTP). Don't hard-fail account creation
+    // if email delivery is temporarily unavailable.
+    console.error("Registration OTP email error:", err);
+    return { ok: true as const, emailSent: false as const };
+  }
 }
 
 export async function verifyEmailOtpCode(supabase: SupabaseClient, email: string, otp: string) {
