@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Download } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -10,6 +11,9 @@ type DownloadAppCardProps = {
   className?: string;
 };
 
+const MOCK_IMAGE =
+  "https://images.unsplash.com/photo-1513828583688-c52646db42da?w=400&q=80";
+
 export function DownloadAppCard({ className }: DownloadAppCardProps) {
   return (
     <Card
@@ -17,7 +21,7 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
       className={cn("overflow-hidden border border-gray-100", className)}
     >
       <div className="gradient-purple p-5 text-white">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-xs font-medium uppercase tracking-wider text-white/70">
               Download the app
@@ -31,19 +35,39 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
             </p>
           </div>
 
-          <div className="hidden sm:block">
-            {/* Simple phone mock (no external assets) */}
-            <div className="relative w-40 h-72 rounded-[2rem] border border-white/20 bg-white/10 overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_55%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
-              <div className="absolute top-3 left-3 text-[10px] font-bold text-white/80">
+          <div className="shrink-0 mx-auto sm:mx-0">
+            <div className="relative w-40 h-72 rounded-[2rem] border border-white/25 bg-white/10 overflow-hidden backdrop-blur-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.28),transparent_55%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
+
+              <div className="absolute top-3 left-3 z-10 text-[10px] font-bold tracking-wide text-white/90">
                 HAM
               </div>
-              <div className="absolute bottom-3 left-3 right-3">
-                <div className="h-10 rounded-2xl bg-white/15" />
-                <div className="h-3 mt-3 rounded-xl bg-white/10" />
-              </div>
-              <div className="absolute top-2 right-2 w-10 h-10 rounded-full bg-white/15 flex items-center justify-center">
+              <div className="absolute top-2 right-2 z-10 w-10 h-10 rounded-full bg-white/15 flex items-center justify-center border border-white/20">
                 <Download className="w-5 h-5 text-white" />
+              </div>
+
+              <div className="absolute inset-x-3 top-12 bottom-14 rounded-2xl overflow-hidden border border-white/20 bg-white/10">
+                <Image
+                  src={MOCK_IMAGE}
+                  alt="Ham radio station"
+                  fill
+                  className="object-cover"
+                  sizes="160px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2e1a47]/70 via-transparent to-transparent" />
+              </div>
+
+              <div className="absolute bottom-3 left-3 right-3 z-10">
+                <div className="h-10 rounded-2xl bg-white/20 border border-white/15 backdrop-blur-sm overflow-hidden relative">
+                  <Image
+                    src={MOCK_IMAGE}
+                    alt=""
+                    fill
+                    className="object-cover opacity-40"
+                    sizes="140px"
+                  />
+                </div>
+                <div className="h-3 mt-2 rounded-xl bg-white/15 border border-white/10" />
               </div>
             </div>
           </div>
@@ -71,4 +95,3 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
     </Card>
   );
 }
-

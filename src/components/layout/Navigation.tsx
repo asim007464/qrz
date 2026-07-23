@@ -165,13 +165,13 @@ export function DesktopSidebar() {
   ];
 
   return (
-    <aside className="hidden md:flex fixed top-0 left-0 z-40 flex-col w-56 lg:w-64 h-screen h-[100dvh] bg-ham-purple-dark text-white p-3 lg:p-4 shrink-0">
-      <Link href="/" className="mb-6 lg:mb-8 px-2 block">
+    <aside className="app-sidebar hidden md:flex flex-col w-56 lg:w-64 bg-ham-purple-dark text-white p-3 lg:p-4">
+      <Link href="/" className="mb-6 lg:mb-8 px-2 block shrink-0">
         <h1 className="text-lg lg:text-xl font-bold tracking-wide">QRZ</h1>
         <p className="text-white/50 text-xs mt-1">Ham Radio Social Network</p>
       </Link>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto">
+      <nav className="flex-1 min-h-0 space-y-1 overflow-y-auto">
         {sidebarItems.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -195,7 +195,7 @@ export function DesktopSidebar() {
 
       <Link
         href="/add"
-        className="mt-4 flex items-center justify-center gap-2 gradient-purple rounded-xl py-2.5 lg:py-3 text-sm font-medium border border-white/10 hover:opacity-90 transition-opacity"
+        className="mt-auto shrink-0 flex items-center justify-center gap-2 gradient-purple rounded-xl py-2.5 lg:py-3 text-sm font-medium border border-white/10 hover:opacity-90 transition-opacity"
       >
         <Plus className="w-5 h-5" />
         Add

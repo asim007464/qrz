@@ -66,6 +66,18 @@
     background: linear-gradient(135deg, #2e1a47 0%, #5b3a8c 100%);
   }
 
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 40;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+
   .gradient-teal {
     background: linear-gradient(180deg, #1e4d5c 0%, #0d3339 100%);
   }
