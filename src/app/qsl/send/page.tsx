@@ -183,7 +183,7 @@ export default function SendQSLPage() {
               <Input label="Mode" placeholder="FT8" value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })} />
               <Input label="RST" placeholder="599" value={form.rst} onChange={(e) => setForm({ ...form, rst: e.target.value })} />
             </div>
-            <Input label="QSL Via" placeholder="LoTW, eQSL, Direct" value={form.qslVia} onChange={(e) => setForm({ ...form, qslVia: e.target.value })} />
+            <Input label="QSL Via" placeholder="LoTW, eQSL, Direct, QRZ.INFO" value={form.qslVia} onChange={(e) => setForm({ ...form, qslVia: e.target.value })} />
           </Card>
 
           <Card>

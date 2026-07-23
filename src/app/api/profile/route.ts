@@ -21,7 +21,7 @@ async function getAuthenticatedUser(request: Request) {
 }
 
 const PROFILE_FIELDS =
-  "id, name, callsign, email, bio, avatar_url, location, country, itu_zone, station_setup, antenna_setup, qsl_info, phone, website, qrz, on_air, background_image, social_links, role, is_blocked, profile_views, profile_searches, cards_received, cards_sent, created_at, updated_at";
+  "id, name, callsign, email, bio, avatar_url, location, country, itu_zone, active_band, active_frequency, active_mode, cq_zone, grid, station_setup, antenna_setup, qsl_info, bio_image, station_setup_image, antenna_setup_image, qsl_info_image, phone, website, qrz, hrdlog_callsign, on_air, background_image, social_links, role, is_blocked, profile_views, profile_searches, cards_received, cards_sent, created_at, updated_at";
 
 export async function GET(request: Request) {
   const user = await getAuthenticatedUser(request);
@@ -65,15 +65,34 @@ export async function PATCH(request: Request) {
     country: "country",
     itu_zone: "itu_zone",
     ituZone: "itu_zone",
+    active_band: "active_band",
+    activeBand: "active_band",
+    active_frequency: "active_frequency",
+    activeFrequency: "active_frequency",
+    active_mode: "active_mode",
+    activeMode: "active_mode",
+    cq_zone: "cq_zone",
+    cqZone: "cq_zone",
+    grid: "grid",
     station_setup: "station_setup",
     stationSetup: "station_setup",
     antenna_setup: "antenna_setup",
     antennaSetup: "antenna_setup",
     qsl_info: "qsl_info",
     qslInfo: "qsl_info",
+    bio_image: "bio_image",
+    bioImage: "bio_image",
+    station_setup_image: "station_setup_image",
+    stationSetupImage: "station_setup_image",
+    antenna_setup_image: "antenna_setup_image",
+    antennaSetupImage: "antenna_setup_image",
+    qsl_info_image: "qsl_info_image",
+    qslInfoImage: "qsl_info_image",
     phone: "phone",
     website: "website",
     qrz: "qrz",
+    hrdlog_callsign: "hrdlog_callsign",
+    hrdlogCallsign: "hrdlog_callsign",
     on_air: "on_air",
     onAir: "on_air",
     background_image: "background_image",

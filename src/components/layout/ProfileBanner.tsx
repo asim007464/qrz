@@ -1,7 +1,9 @@
 import Image from "next/image";
-import { Globe, QrCode, Radio } from "lucide-react";
+import { Globe, Radio } from "lucide-react";
 import type { UserProfile } from "@/types";
 import { Badge } from "@/components/ui/Badge";
+import { ProfileQRCode } from "@/components/profile/ProfileQRCode";
+import { HrdLogWidget } from "@/components/profile/HrdLogWidget";
 import { cn } from "@/lib/utils";
 
 type ProfileBannerProps = {
@@ -24,6 +26,8 @@ export function ProfileBanner({
         backgroundPosition: "center",
       }
     : undefined;
+
+  const logCallsign = (user.hrdlogCallsign || "").trim();
 
   return (
     <div
@@ -56,7 +60,12 @@ export function ProfileBanner({
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className={cn("font-bold tracking-wide truncate", compact ? "text-lg sm:text-xl" : "text-xl sm:text-2xl md:text-3xl")}>
+            <h2
+              className={cn(
+                "font-bold tracking-wide truncate",
+                compact ? "text-lg sm:text-xl" : "text-xl sm:text-2xl md:text-3xl"
+              )}
+            >
               {user.callsign}
             </h2>
             <p className="text-white/80 text-sm truncate">{user.name}</p>
@@ -68,18 +77,14 @@ export function ProfileBanner({
         </div>
 
         {showQr && (
-          <div className="hidden sm:flex flex-col items-center gap-1">
-            <div className="bg-white p-1.5 rounded-lg">
-              <QrCode className="w-12 h-12 text-ham-purple" />
-            </div>
-            <span className="text-[10px] text-white/60">Scan to connect</span>
+          <div className="flex flex-col items-center gap-0.5 shrink-0 self-start sm:self-auto ml-auto sm:ml-0">
+            <ProfileQRCode callsign={user.callsign} size={72} />
           </div>
         )}
       </div>
 
       {!compact && (
         <div className="mt-4">
-          {/* "Now operating" stats row (mobile-app style) */}
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white/10 rounded-xl p-3 text-center">
               <p className="text-[10px] font-semibold text-white/70">Band</p>
@@ -107,17 +112,21 @@ export function ProfileBanner({
             </div>
           </div>
 
+          {logCallsign && <HrdLogWidget callsign={logCallsign} className="mt-4" />}
+
           <div className="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
             <div className="flex gap-2 flex-wrap">
-              {Object.entries(user.socialLinks).slice(0, 4).map(([key]) => (
-                <span
-                  key={key}
-                  className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-xs uppercase font-bold hover:bg-white/25 transition-colors cursor-pointer"
-                  title={key}
-                >
-                  {key[0]}
-                </span>
-              ))}
+              {Object.entries(user.socialLinks)
+                .slice(0, 4)
+                .map(([key]) => (
+                  <span
+                    key={key}
+                    className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-xs uppercase font-bold hover:bg-white/25 transition-colors cursor-pointer"
+                    title={key}
+                  >
+                    {key[0]}
+                  </span>
+                ))}
             </div>
             <div className="flex gap-2 sm:ml-auto flex-wrap">
               <Badge variant="default" className="bg-white/15 text-white border-0">

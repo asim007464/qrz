@@ -79,11 +79,16 @@ export function BottomNav() {
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
+            (item.href === "/" && (pathname === "/" || pathname.startsWith("/feed"))) ||
+            (item.href === "/feed" && (pathname === "/" || pathname.startsWith("/feed"))) ||
             (item.href === "/add" &&
               (pathname.startsWith("/add") ||
                 pathname.startsWith("/qsl/send") ||
                 pathname.startsWith("/repeaters"))) ||
-            (item.href !== "/" && item.href !== "/add" && pathname.startsWith(item.href));
+            (item.href !== "/" &&
+              item.href !== "/add" &&
+              item.href !== "/feed" &&
+              pathname.startsWith(item.href));
 
           if (item.isCenter) {
             return (
@@ -147,7 +152,7 @@ export function DesktopSidebar() {
   const pathname = usePathname();
 
   const sidebarItems = [
-    { href: "/", icon: Home, label: "Home Feed" },
+    { href: "/feed", icon: Home, label: "CQ Feed" },
     { href: "/search", icon: Search, label: "Search Users" },
     { href: "/repeaters", icon: Radio, label: "Repeaters" },
     { href: "/card", icon: CreditCard, label: "My Digital Card" },
@@ -160,7 +165,7 @@ export function DesktopSidebar() {
   ];
 
   return (
-    <aside className="hidden md:flex flex-col w-56 lg:w-64 bg-ham-purple-dark text-white min-h-screen p-3 lg:p-4 shrink-0">
+    <aside className="hidden md:flex fixed top-0 left-0 z-40 flex-col w-56 lg:w-64 h-screen h-[100dvh] bg-ham-purple-dark text-white p-3 lg:p-4 shrink-0">
       <Link href="/" className="mb-6 lg:mb-8 px-2 block">
         <h1 className="text-lg lg:text-xl font-bold tracking-wide">QRZ</h1>
         <p className="text-white/50 text-xs mt-1">Ham Radio Social Network</p>

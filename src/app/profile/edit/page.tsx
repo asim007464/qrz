@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/Card";
 import { Input, Textarea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { BackgroundPicker } from "@/components/profile/BackgroundPicker";
+import { FieldImagePicker } from "@/components/profile/FieldImagePicker";
 import { currentUser, backgroundPresets } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
@@ -31,8 +32,13 @@ export default function EditProfilePage() {
     station_setup: currentUser.stationSetup,
     antenna_setup: currentUser.antennaSetup,
     qsl_info: currentUser.qslInfo,
+    bio_image: null as string | null,
+    station_setup_image: null as string | null,
+    antenna_setup_image: null as string | null,
+    qsl_info_image: null as string | null,
     phone: currentUser.phone,
     website: currentUser.socialLinks.website || "",
+    hrdlog_callsign: "",
   });
 
   useEffect(() => {
@@ -42,7 +48,9 @@ export default function EditProfilePage() {
       return;
     }
     async function load() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.access_token) return;
       const res = await fetch("/api/profile", {
         headers: { Authorization: `Bearer ${session.access_token}` },
@@ -60,17 +68,24 @@ export default function EditProfilePage() {
         station_setup: data.station_setup || "",
         antenna_setup: data.antenna_setup || "",
         qsl_info: data.qsl_info || "",
+        bio_image: data.bio_image || null,
+        station_setup_image: data.station_setup_image || null,
+        antenna_setup_image: data.antenna_setup_image || null,
+        qsl_info_image: data.qsl_info_image || null,
         phone: data.phone || "",
         website: links.website || data.website || "",
+        hrdlog_callsign: data.hrdlog_callsign || "",
       });
     }
-    load();
+    void load();
   }, [authLoading, isLoggedIn, router]);
 
   const save = async () => {
     setSaving(true);
     setSaved(false);
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session?.access_token) return;
     const res = await fetch("/api/profile", {
       method: "PATCH",
@@ -107,7 +122,10 @@ export default function EditProfilePage() {
               height={96}
               className="w-24 h-24 rounded-full object-cover border-4 border-ham-purple/20"
             />
-            <button type="button" className="absolute bottom-0 right-0 w-8 h-8 rounded-full gradient-purple flex items-center justify-center">
+            <button
+              type="button"
+              className="absolute bottom-0 right-0 w-8 h-8 rounded-full gradient-purple flex items-center justify-center"
+            >
               <Camera className="w-4 h-4 text-white" />
             </button>
           </div>
@@ -120,20 +138,74 @@ export default function EditProfilePage() {
           <Input label="Location" value={form.location} onChange={set("location")} />
           <Input label="Country" value={form.country} onChange={set("country")} />
           <Input label="ITU Zone" value={form.itu_zone} onChange={set("itu_zone")} />
-          <Textarea label="Bio" value={form.bio} onChange={set("bio")} rows={3} />
         </Card>
 
         <Card className="space-y-4">
-          <h3 className="font-semibold text-ham-purple">Station & Antenna</h3>
-          <Textarea label="Station Setup" value={form.station_setup} onChange={set("station_setup")} rows={2} />
-          <Textarea label="Antenna Setup" value={form.antenna_setup} onChange={set("antenna_setup")} rows={2} />
-          <Input label="QSL Info" value={form.qsl_info} onChange={set("qsl_info")} />
+          <h3 className="font-semibold text-ham-purple">About & Station</h3>
+          <div className="space-y-3">
+            <Textarea label="Bio" value={form.bio} onChange={set("bio")} rows={3} />
+            <FieldImagePicker
+              label="About Me photo"
+              imageUrl={form.bio_image}
+              onChange={(url) => setForm((f) => ({ ...f, bio_image: url }))}
+            />
+          </div>
+          <div className="space-y-3 border-t border-gray-100 pt-4">
+            <Textarea
+              label="Station Setup"
+              value={form.station_setup}
+              onChange={set("station_setup")}
+              rows={2}
+            />
+            <FieldImagePicker
+              label="Station Setup photo"
+              imageUrl={form.station_setup_image}
+              onChange={(url) => setForm((f) => ({ ...f, station_setup_image: url }))}
+            />
+          </div>
+          <div className="space-y-3 border-t border-gray-100 pt-4">
+            <Textarea
+              label="Antenna Setup"
+              value={form.antenna_setup}
+              onChange={set("antenna_setup")}
+              rows={2}
+            />
+            <FieldImagePicker
+              label="Antenna Setup photo"
+              imageUrl={form.antenna_setup_image}
+              onChange={(url) => setForm((f) => ({ ...f, antenna_setup_image: url }))}
+            />
+          </div>
+          <div className="space-y-3 border-t border-gray-100 pt-4">
+            <Input label="QSL Info" value={form.qsl_info} onChange={set("qsl_info")} />
+            <FieldImagePicker
+              label="QSL Info photo"
+              imageUrl={form.qsl_info_image}
+              onChange={(url) => setForm((f) => ({ ...f, qsl_info_image: url }))}
+            />
+          </div>
         </Card>
 
         <Card className="space-y-4">
           <h3 className="font-semibold text-ham-purple">Contact</h3>
           <Input label="Phone" type="tel" value={form.phone} onChange={set("phone")} />
           <Input label="Website" value={form.website} onChange={set("website")} />
+        </Card>
+
+        <Card className="space-y-3">
+          <h3 className="font-semibold text-ham-purple">HRDLOG.net Log</h3>
+          <p className="text-xs text-gray-500">
+            Enter your HRDLOG.net callsign to show your last QSOs on your profile banner.
+          </p>
+          <Input
+            label="HRDLOG Callsign"
+            placeholder="e.g. 9K2GV"
+            value={form.hrdlog_callsign}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, hrdlog_callsign: e.target.value.toUpperCase() }))
+            }
+            className="no-cap"
+          />
         </Card>
 
         <Card>
@@ -146,11 +218,13 @@ export default function EditProfilePage() {
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-3 pb-4">
-          <Button size="lg" className="flex-1 w-full" onClick={save} disabled={saving}>
+          <Button size="lg" className="flex-1 w-full" onClick={() => void save()} disabled={saving}>
             {saved ? "Saved!" : saving ? "Saving…" : "Save Changes"}
           </Button>
           <Link href="/menu" className="flex-1">
-            <Button size="lg" variant="outline" className="w-full">Cancel</Button>
+            <Button size="lg" variant="outline" className="w-full">
+              Cancel
+            </Button>
           </Link>
         </div>
       </div>

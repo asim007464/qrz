@@ -1,13 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { Radio, CreditCard, ExternalLink } from "lucide-react";
+import { Radio, CreditCard, ExternalLink, PenSquare } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { OPENREPEATER_SITE } from "@/lib/openRepeater";
 
 const options = [
+  {
+    href: "/add/post",
+    icon: PenSquare,
+    title: "Make Post",
+    description: "Share an update, photo, or CQ call on the CQ Feed.",
+    color: "from-ham-purple to-violet-500",
+  },
   {
     href: "/qsl/send",
     icon: CreditCard,

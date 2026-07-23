@@ -20,12 +20,30 @@ export async function POST(request: Request) {
     const callsign = String(body.callsign ?? "").trim().toUpperCase();
     const email = String(body.email ?? "").trim().toLowerCase();
     const password = String(body.password ?? "");
+    const avatarUrl = String(body.avatarUrl ?? "").trim();
+    const location = String(body.location ?? "").trim();
+    const country = String(body.country ?? "").trim();
+    const ituZone = String(body.ituZone ?? body.itu_zone ?? "").trim();
+    const activeBand = String(body.activeBand ?? body.active_band ?? "").trim();
+    const activeFrequency = String(body.activeFrequency ?? body.active_frequency ?? "").trim();
+    const activeMode = String(body.activeMode ?? body.active_mode ?? "").trim().toUpperCase();
+    const cqZone = String(body.cqZone ?? body.cq_zone ?? "").trim();
+    const grid = String(body.grid ?? "").trim().toUpperCase();
 
     if (!displayName) {
       return NextResponse.json({ error: "Display name is required." }, { status: 400 });
     }
     if (!callsign) {
       return NextResponse.json({ error: "Callsign is required." }, { status: 400 });
+    }
+    if (!avatarUrl) {
+      return NextResponse.json({ error: "Profile photo is required." }, { status: 400 });
+    }
+    if (!location) {
+      return NextResponse.json({ error: "Location is required." }, { status: 400 });
+    }
+    if (!country) {
+      return NextResponse.json({ error: "Country is required." }, { status: 400 });
     }
     if (!CALLSIGN_RE.test(callsign)) {
       return NextResponse.json({ error: "Enter a valid callsign (3–12 characters)." }, { status: 400 });
@@ -61,7 +79,7 @@ export async function POST(request: Request) {
       password,
       options: {
         redirectTo,
-        data: { display_name: displayName, callsign },
+        data: { display_name: displayName, callsign, avatar_url: avatarUrl },
       },
     });
 
@@ -90,6 +108,15 @@ export async function POST(request: Request) {
       name: displayName,
       callsign,
       email,
+      avatar_url: avatarUrl,
+      location,
+      country,
+      itu_zone: ituZone,
+      active_band: activeBand,
+      active_frequency: activeFrequency,
+      active_mode: activeMode,
+      cq_zone: cqZone,
+      grid,
       role,
     });
 

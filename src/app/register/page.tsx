@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { CheckCircle2, Loader2, ArrowRight } from "lucide-react";
+import { Camera, CheckCircle2, Loader2, ArrowRight } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import { PasswordInput, passwordFieldAttrs } from "@/components/PasswordInput";
 import { checkPassword } from "@/lib/passwordUtils";
@@ -14,6 +14,15 @@ export default function RegisterPage() {
   const [displayName, setDisplayName] = useState("");
   const [callsign, setCallsign] = useState("");
   const [email, setEmail] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [location, setLocation] = useState("");
+  const [country, setCountry] = useState("");
+  const [ituZone, setItuZone] = useState("ITU Zone 8");
+  const [activeBand, setActiveBand] = useState("20m");
+  const [activeFrequency, setActiveFrequency] = useState("14.240 MHz");
+  const [activeMode, setActiveMode] = useState("USB");
+  const [cqZone, setCqZone] = useState("CQ Zone 22");
+  const [grid, setGrid] = useState("MK7QB");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -38,6 +47,9 @@ export default function RegisterPage() {
 
     if (!displayName.trim()) return setError("Display name is required.");
     if (!callsign.trim()) return setError("Callsign is required.");
+    if (!avatarUrl) return setError("Profile photo is required.");
+    if (!location.trim()) return setError("Location is required.");
+    if (!country.trim()) return setError("Country is required.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setError("Enter a valid email address.");
     if (!pwStrength.passed) return setError("Password does not meet all requirements.");
     if (password !== confirmPassword) return setError("Passwords do not match.");
@@ -53,11 +65,25 @@ export default function RegisterPage() {
           displayName: displayName.trim(),
           callsign: callsign.trim().toUpperCase(),
           email: email.trim().toLowerCase(),
+          avatarUrl,
+          location: location.trim(),
+          country: country.trim(),
+          ituZone: ituZone.trim(),
+          activeBand: activeBand.trim(),
+          activeFrequency: activeFrequency.trim(),
+          activeMode: activeMode.trim().toUpperCase(),
+          cqZone: cqZone.trim(),
+          grid: grid.trim().toUpperCase(),
           password,
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Registration failed.");
+
+      if (data.requiresVerification === false) {
+        setStep("done");
+        return;
+      }
 
       setSentNotice(data.message ?? "A 6-digit code was sent to your email.");
       setStep("otp");
@@ -92,6 +118,25 @@ export default function RegisterPage() {
     }
   }
 
+  function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("Upload a valid image file.");
+      return;
+    }
+    if (file.size > 750 * 1024) {
+      setError("Image must be smaller than 750KB.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setAvatarUrl(String(reader.result || ""));
+      setError("");
+    };
+    reader.readAsDataURL(file);
+  }
+
   async function verifyOtp() {
     if (!/^\d{6}$/.test(otp)) {
       setError("Enter the 6-digit code from your email.");
@@ -118,20 +163,31 @@ export default function RegisterPage() {
   }
 
   if (step === "done") {
+    const loginHref =
+      redirectTo === "/"
+        ? `/login?welcome=1&callsign=${encodeURIComponent(callsign)}&verified=1`
+        : `/login?welcome=1&callsign=${encodeURIComponent(callsign)}&verified=1&next=${encodeURIComponent(redirectTo)}`;
+
     return (
       <div className="auth-page">
         <div className="auth-card panel">
           <div className="auth-done">
-            <CheckCircle2 size={40} className="auth-done-icon" />
-            <h1>Email Verified</h1>
-            <p className="section-sub">
-              Your account is ready. Sign in with <strong className="no-cap">{email}</strong> and your password.
+            <CheckCircle2 size={48} className="auth-done-icon" />
+            <h1>Welcome to QRZ!</h1>
+            <p className="section-sub" style={{ textAlign: "center", lineHeight: 1.6 }}>
+              73, <strong>{displayName}</strong>! Your operator profile{" "}
+              <strong className="no-cap">{callsign}</strong> is ready on the ham radio social network.
             </p>
-            <Link
-              href={redirectTo === "/" ? "/login?verified=1" : `/login?verified=1&next=${encodeURIComponent(redirectTo)}`}
-              className="btn btn-primary auth-submit"
-            >
-              Go to sign in
+            <div className="auth-welcome-box">
+              <p className="auth-welcome-title">You can now:</p>
+              <ul className="auth-welcome-list">
+                <li>Share your digital card and QSL cards</li>
+                <li>Connect with operators worldwide</li>
+                <li>Track profile views and analytics</li>
+              </ul>
+            </div>
+            <Link href={loginHref} className="btn btn-primary auth-submit">
+              Sign in to QRZ
             </Link>
           </div>
         </div>
@@ -200,6 +256,21 @@ export default function RegisterPage() {
         {error && <p role="alert" className="auth-notice auth-notice--error">{error}</p>}
 
         <form onSubmit={handleRegister} className="auth-form">
+          <div className="auth-avatar-upload">
+            <label className="auth-avatar-preview">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Profile preview" />
+              ) : (
+                <Camera size={28} />
+              )}
+              <input type="file" accept="image/*" onChange={handleAvatarUpload} />
+            </label>
+            <div>
+              <p className="auth-avatar-title">Upload profile photo</p>
+              <p className="auth-avatar-help">Required. This appears on your QRZ card.</p>
+            </div>
+          </div>
+
           <label className="field">
             <span>Display name</span>
             <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
@@ -218,6 +289,44 @@ export default function RegisterPage() {
             <span>Email address</span>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="no-cap" />
           </label>
+          <div className="auth-grid-2">
+            <label className="field">
+              <span>Where are you from?</span>
+              <input value={location} onChange={(e) => setLocation(e.target.value)} required placeholder="New York, USA" />
+            </label>
+            <label className="field">
+              <span>Country</span>
+              <input value={country} onChange={(e) => setCountry(e.target.value)} required placeholder="USA" />
+            </label>
+          </div>
+          <div className="auth-grid-3">
+            <label className="field">
+              <span>Band</span>
+              <input value={activeBand} onChange={(e) => setActiveBand(e.target.value)} required className="no-cap" />
+            </label>
+            <label className="field">
+              <span>Frequency</span>
+              <input value={activeFrequency} onChange={(e) => setActiveFrequency(e.target.value)} required className="no-cap" />
+            </label>
+            <label className="field">
+              <span>Mode</span>
+              <input value={activeMode} onChange={(e) => setActiveMode(e.target.value.toUpperCase())} required className="no-cap" />
+            </label>
+          </div>
+          <div className="auth-grid-3">
+            <label className="field">
+              <span>CQ Zone</span>
+              <input value={cqZone} onChange={(e) => setCqZone(e.target.value)} required className="no-cap" />
+            </label>
+            <label className="field">
+              <span>ITU Zone</span>
+              <input value={ituZone} onChange={(e) => setItuZone(e.target.value)} required className="no-cap" />
+            </label>
+            <label className="field">
+              <span>Grid</span>
+              <input value={grid} onChange={(e) => setGrid(e.target.value.toUpperCase())} required className="no-cap" />
+            </label>
+          </div>
           <PasswordInput
             label="Password"
             value={password}

@@ -12,6 +12,15 @@ export interface UserProfile {
   role: string;
   is_blocked?: boolean;
   avatar_url?: string | null;
+  location?: string | null;
+  country?: string | null;
+  itu_zone?: string | null;
+  active_band?: string | null;
+  active_frequency?: string | null;
+  active_mode?: string | null;
+  cq_zone?: string | null;
+  grid?: string | null;
+  hrdlog_callsign?: string | null;
 }
 
 export function useAuth() {
@@ -27,7 +36,7 @@ export function useAuth() {
       }
       const { data } = await supabase
         .from("profiles")
-        .select("name, callsign, email, role, is_blocked, avatar_url")
+        .select("name, callsign, email, role, is_blocked, avatar_url, location, country, itu_zone, active_band, active_frequency, active_mode, cq_zone, grid, hrdlog_callsign")
         .eq("id", authUser.id)
         .maybeSingle();
 

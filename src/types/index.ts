@@ -19,6 +19,10 @@ export type UserProfile = {
   stationSetup: string;
   antennaSetup: string;
   qslInfo: string;
+  bioImage?: string;
+  stationSetupImage?: string;
+  antennaSetupImage?: string;
+  qslInfoImage?: string;
   email: string;
   phone: string;
   onAir: boolean;
@@ -30,6 +34,8 @@ export type UserProfile = {
   activeMode?: string; // e.g. "USB", "FT8"
   cqZone?: string; // e.g. "22"
   grid?: string; // e.g. "MK7QB"
+  /** HRDLOG.net callsign for the last-QSO log widget */
+  hrdlogCallsign?: string;
   profileViews: number;
   profileSearches: number;
   cardsReceived: number;
@@ -84,12 +90,20 @@ export type NetworkUser = {
   distanceKm?: number;
 };
 
+export type ActivityReply = {
+  id: string;
+  user: Pick<UserProfile, "callsign" | "avatar" | "name">;
+  content: string;
+  timestamp: string;
+};
+
 export type ActivityItem = {
   id: string;
   user: Pick<UserProfile, "callsign" | "avatar" | "name">;
   content: string;
   image?: string;
   timestamp: string;
+  replies?: ActivityReply[];
 };
 
 export type AnalyticsData = {

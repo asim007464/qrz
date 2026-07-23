@@ -17,6 +17,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
+  const [welcomeCallsign, setWelcomeCallsign] = useState<string | null>(null);
   const [redirectTo, setRedirectTo] = useState("/");
   const [needsVerification, setNeedsVerification] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
@@ -30,6 +31,15 @@ export default function LoginPage() {
     if (params.get("verified") === "1") {
       setVerified(true);
       showToast("Email verified! You can sign in now.");
+    }
+    if (params.get("welcome") === "1") {
+      const callsign = params.get("callsign");
+      setWelcomeCallsign(callsign);
+      showToast(
+        callsign
+          ? `Welcome to QRZ, ${callsign}! Sign in to get started.`
+          : "Welcome to QRZ! Sign in to get started."
+      );
     }
   }, [showToast]);
 
@@ -134,6 +144,12 @@ export default function LoginPage() {
             <h1>Sign In To QRZ</h1>
             <p className="section-sub">Sign in to access the ham radio social network. New users must register first.</p>
           </div>
+
+          {welcomeCallsign && (
+            <p className="auth-notice auth-notice--success">
+              Welcome to QRZ, <strong className="no-cap">{welcomeCallsign}</strong>! Your account is ready — sign in below.
+            </p>
+          )}
 
           {verified && (
             <p className="auth-notice auth-notice--success">

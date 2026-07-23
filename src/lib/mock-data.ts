@@ -280,12 +280,21 @@ export const activities: ActivityItem[] = [
     content: "Just worked a new DXCC entity on 20m FT8! 73 to all.",
     image: "https://images.unsplash.com/photo-1513828583688-c52646db42da?w=400&q=80",
     timestamp: "2h ago",
+    replies: [
+      {
+        id: "r1",
+        user: { callsign: "JA1XYZ", avatar: "https://i.pravatar.cc/150?u=ja1xyz", name: "Yuki Tanaka" },
+        content: "Congrats Max! Which entity?",
+        timestamp: "1h ago",
+      },
+    ],
   },
   {
     id: "a2",
     user: { callsign: "JA1XYZ", avatar: "https://i.pravatar.cc/150?u=ja1xyz", name: "Yuki Tanaka" },
     content: "QSL card sent via LoTW. Looking forward to the confirmation!",
     timestamp: "5h ago",
+    replies: [],
   },
   {
     id: "a3",
@@ -293,6 +302,14 @@ export const activities: ActivityItem[] = [
     content: "Field day setup complete. See you on the air this weekend!",
     image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&q=80",
     timestamp: "1d ago",
+    replies: [
+      {
+        id: "r2",
+        user: { callsign: "DL9XX", avatar: "https://i.pravatar.cc/150?u=dl9xx", name: "Max Mustermann" },
+        content: "Looking forward to working you on 40m!",
+        timestamp: "20h ago",
+      },
+    ],
   },
 ];
 

@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Bot } from "lucide-react";
+import { Bot, ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ProfileBanner } from "@/components/layout/ProfileBanner";
 import { ActivityFeed } from "@/components/home/ActivityFeed";
@@ -10,10 +11,33 @@ import { DownloadAppCard } from "@/components/home/DownloadAppCard";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
-import { currentUser, activities, networkUsers } from "@/lib/mock-data";
+import { currentUser, activities as mockActivities, networkUsers } from "@/lib/mock-data";
+import { fetchFeedItems } from "@/lib/feed";
+import type { ActivityItem } from "@/types";
+
+const PREVIEW_COUNT = 3;
 
 export default function HomePage() {
   const { isLoggedIn, profile, loading } = useAuth();
+  const [feedItems, setFeedItems] = useState<ActivityItem[]>(mockActivities);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchFeedItems(50)
+      .then((items) => {
+        if (cancelled || items.length === 0) return;
+        setFeedItems(items);
+      })
+      .catch(() => {
+        /* keep mock feed */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const previewItems = feedItems.slice(0, PREVIEW_COUNT);
+  const hasMore = feedItems.length > PREVIEW_COUNT;
 
   const displayUser = profile
     ? {
@@ -21,6 +45,16 @@ export default function HomePage() {
         callsign: profile.callsign || currentUser.callsign,
         name: profile.name || currentUser.name,
         email: profile.email || currentUser.email,
+        avatar: profile.avatar_url || currentUser.avatar,
+        location: profile.location || currentUser.location,
+        country: profile.country || currentUser.country,
+        ituZone: profile.itu_zone || currentUser.ituZone,
+        activeBand: profile.active_band || currentUser.activeBand,
+        activeFrequency: profile.active_frequency || currentUser.activeFrequency,
+        activeMode: profile.active_mode || currentUser.activeMode,
+        cqZone: profile.cq_zone || currentUser.cqZone,
+        grid: profile.grid || currentUser.grid,
+        hrdlogCallsign: profile.hrdlog_callsign || undefined,
       }
     : currentUser;
 
@@ -54,16 +88,34 @@ export default function HomePage() {
         <div>
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-xs font-bold tracking-widest uppercase text-gray-600">
-              Activity feed
+              CQ Feed
             </h2>
+            <div className="flex items-center gap-3">
+              <Link
+                href={isLoggedIn ? "/add/post" : "/login?next=/add/post"}
+                className="text-xs text-gray-500 hover:text-ham-purple hover:underline"
+              >
+                Make Post
+              </Link>
+              <Link href="/feed" className="text-xs text-ham-purple font-medium hover:underline">
+                See All
+              </Link>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <ActivityFeed
+              key={previewItems.map((a) => a.id).join(",")}
+              activities={previewItems}
+            />
             <Link
-              href="/analytics"
-              className="text-xs text-ham-purple hover:underline"
+              href="/feed"
+              className="flex items-center justify-center gap-1 rounded-xl border border-dashed border-gray-200 bg-white py-2.5 text-xs font-medium text-ham-purple hover:border-ham-purple/30 hover:bg-ham-purple/5 transition-colors"
             >
-              See All
+              {hasMore ? "Open full CQ Feed" : "See all posts from operators"}
+              <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-          <ActivityFeed activities={activities} />
         </div>
 
         <div className="lg:pl-1">
