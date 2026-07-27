@@ -48,7 +48,7 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
               <div className="absolute inset-x-3 top-12 bottom-14 rounded-2xl overflow-hidden border border-white/20 bg-white/10">
                 <Image
                   src={MOCK_IMAGE}
-                  alt="Ham radio station"
+                  alt="Radio station"
                   fill
                   className="object-cover"
                   sizes="160px"

@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Camera } from "lucide-react";
-import Image from "next/image";
+import { Camera, Loader2 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
@@ -12,17 +11,22 @@ import { Input, Textarea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { BackgroundPicker } from "@/components/profile/BackgroundPicker";
 import { FieldImagePicker } from "@/components/profile/FieldImagePicker";
-import { backgroundPresets } from "@/lib/constants";
-import { avatarForCallsign, EMPTY_PROFILE } from "@/lib/profileDefaults";
+import { backgroundPresets, MAX_IMAGE_BYTES, MAX_IMAGE_SIZE_LABEL } from "@/lib/constants";
+import { avatarForCallsign } from "@/lib/profileDefaults";
+import { compressImageFile } from "@/lib/compressImage";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 
 export default function EditProfilePage() {
   const router = useRouter();
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const { isLoggedIn, loading: authLoading, profile } = useAuth();
   const [selectedBg, setSelectedBg] = useState("bg1");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
   const [form, setForm] = useState({
     callsign: "",
     name: "",
@@ -41,7 +45,7 @@ export default function EditProfilePage() {
     website: "",
     hrdlog_callsign: "",
   });
-  const avatarSrc = avatarForCallsign(form.callsign || profile?.callsign || "qrz", profile?.avatar_url);
+  const avatarSrc = avatarUrl || avatarForCallsign(form.callsign || profile?.callsign || "qrz", profile?.avatar_url);
 
   useEffect(() => {
     if (authLoading) return;
@@ -78,6 +82,7 @@ export default function EditProfilePage() {
         website: links.website || data.website || "",
         hrdlog_callsign: data.hrdlog_callsign || "",
       });
+      setAvatarUrl(data.avatar_url || null);
     }
     void load();
   }, [authLoading, isLoggedIn, router]);
@@ -97,6 +102,7 @@ export default function EditProfilePage() {
       },
       body: JSON.stringify({
         ...form,
+        ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
         social_links: { website: form.website },
       }),
     });
@@ -105,6 +111,52 @@ export default function EditProfilePage() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
+  };
+
+  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setAvatarError("Upload a valid image file.");
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      setAvatarError(`Image must be smaller than ${MAX_IMAGE_SIZE_LABEL}.`);
+      return;
+    }
+
+    void (async () => {
+      setAvatarBusy(true);
+      setAvatarError("");
+      try {
+        const dataUrl = await compressImageFile(file);
+        setAvatarUrl(dataUrl);
+
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session?.access_token) return;
+
+        const res = await fetch("/api/profile", {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ avatar_url: dataUrl }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Save failed");
+        }
+      } catch {
+        setAvatarError("Could not save photo. Try again.");
+      } finally {
+        setAvatarBusy(false);
+      }
+    })();
   };
 
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -117,21 +169,34 @@ export default function EditProfilePage() {
       <div className="space-y-4">
         <Card className="flex flex-col items-center">
           <div className="relative">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={avatarSrc}
               alt="Avatar"
-              width={96}
-              height={96}
               className="w-24 h-24 rounded-full object-cover border-4 border-ham-purple/20"
             />
             <button
               type="button"
-              className="absolute bottom-0 right-0 w-8 h-8 rounded-full gradient-purple flex items-center justify-center"
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={avatarBusy}
+              className="absolute bottom-0 right-0 w-8 h-8 rounded-full gradient-purple flex items-center justify-center disabled:opacity-50"
+              aria-label="Change profile photo"
             >
-              <Camera className="w-4 h-4 text-white" />
+              {avatarBusy ? (
+                <Loader2 className="w-4 h-4 text-white animate-spin" />
+              ) : (
+                <Camera className="w-4 h-4 text-white" />
+              )}
             </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarUpload}
+            />
           </div>
-          <p className="text-xs text-gray-400 mt-2">Avatar upload coming soon</p>
+          {avatarError && <p className="text-xs text-red-500 mt-2">{avatarError}</p>}
         </Card>
 
         <Card className="space-y-4">

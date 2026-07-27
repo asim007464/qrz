@@ -151,7 +151,7 @@ export default function LoginPage() {
           <div className="auth-header">
             <BrandMark link={false} size="auth" />
             <h1>Sign In To QRZ</h1>
-            <p className="section-sub">Sign in to access the ham radio social network. New users must register first.</p>
+            <p className="section-sub">Sign in to access the QRZ social network. New users must register first.</p>
           </div>
 
           {welcomeCallsign && (

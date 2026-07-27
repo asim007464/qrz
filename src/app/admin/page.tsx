@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import {
-  Users, MessageSquare, CreditCard, ShieldAlert, ShieldCheck, Megaphone, Sparkles,
+  Users, MessageSquare, CreditCard, ShieldAlert, ShieldCheck, Megaphone, Sparkles, Newspaper, Wallet,
 } from "lucide-react";
 import { adminFetch, useAdminData } from "@/components/admin/useAdminData";
 
@@ -51,6 +51,16 @@ export default function AdminDashboardPage() {
           <span>QSL Templates</span>
           <strong>{data.stats.totalTemplates}</strong>
         </div>
+        <div className="admin-stat admin-stat--card">
+          <Newspaper size={18} />
+          <span>Feed posts</span>
+          <strong>{data.stats.totalPosts}</strong>
+        </div>
+        <div className="admin-stat admin-stat--card">
+          <Wallet size={18} />
+          <span>QSL cards</span>
+          <strong>{data.stats.totalQslCards}</strong>
+        </div>
         <div className="admin-stat admin-stat--card admin-stat--warn">
           <MessageSquare size={18} />
           <span>Open support</span>
@@ -82,7 +92,7 @@ export default function AdminDashboardPage() {
               rows={3}
               value={lockMsg || data.lockdown.message || ""}
               onChange={(e) => setLockMsg(e.target.value)}
-              disabled={lockdownOn && !data.session.isSuperAdmin}
+              disabled={lockdownOn}
             />
           </label>
           <div className="admin-panel-actions">
@@ -95,7 +105,7 @@ export default function AdminDashboardPage() {
               >
                 {busy === "lockdown" ? "Shutting down…" : "Shutdown website"}
               </button>
-            ) : data.session.isSuperAdmin ? (
+            ) : (
               <button
                 type="button"
                 className="btn btn-primary"
@@ -104,10 +114,6 @@ export default function AdminDashboardPage() {
               >
                 {busy === "lockdown" ? "Restoring…" : "Restore website"}
               </button>
-            ) : (
-              <p className="auth-hint" style={{ textAlign: "left" }}>
-                Only the developer super-admin can restore the site.
-              </p>
             )}
           </div>
         </section>
@@ -124,6 +130,20 @@ export default function AdminDashboardPage() {
           <div>
             <strong>Users and roles</strong>
             <span>{data.stats.totalUsers} registered members</span>
+          </div>
+        </Link>
+        <Link href="/admin/posts" className="admin-quick-card panel admin-quick-card--rich">
+          <Newspaper size={20} />
+          <div>
+            <strong>CQ Feed posts</strong>
+            <span>{data.stats.totalPosts} posts · view authors & delete</span>
+          </div>
+        </Link>
+        <Link href="/admin/qsl" className="admin-quick-card panel admin-quick-card--rich">
+          <Wallet size={20} />
+          <div>
+            <strong>All QSL cards</strong>
+            <span>{data.stats.totalQslCards} cards · view details & delete</span>
           </div>
         </Link>
         <Link href="/admin/support" className="admin-quick-card panel admin-quick-card--rich">

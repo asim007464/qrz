@@ -48,6 +48,8 @@ export interface AdminData {
     totalUsers: number;
     openSupport: number;
     totalTemplates: number;
+    totalPosts: number;
+    totalQslCards: number;
     onlineNow: number;
   };
   session: { isSuperAdmin: boolean; name: string; email: string };

@@ -10,11 +10,11 @@ const CLARITY_PROJECT_ID = "xltuyrfjdx";
 
 export const metadata: Metadata = {
   title: {
-    default: "QRZ — Ham Radio Social Network",
+    default: "QRZ — Social Network",
     template: "%s | QRZ",
   },
   description:
-    "QRZ is the social networking platform for ham radio enthusiasts. Share QSL cards, connect with operators worldwide.",
+    "QRZ is the social networking platform for radio operators. Share QSL cards, connect with operators worldwide.",
   applicationName: "QRZ",
   icons: {
     icon: [{ url: "/qrz-app-icon.png", type: "image/png" }],

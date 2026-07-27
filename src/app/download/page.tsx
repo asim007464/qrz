@@ -28,7 +28,7 @@ export default function DownloadPage({ searchParams }: Props) {
                   Upload, share, connect, and manage your QSLs
                 </h2>
                 <p className="text-sm text-white/80 mt-2">
-                  Install QRZ on your phone to access the ham radio social network on the go.
+                  Install QRZ on your phone to access the QRZ social network on the go.
                 </p>
               </div>
               <AppIcon size={72} className="shrink-0 shadow-lg border border-white/20" />

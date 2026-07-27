@@ -11,9 +11,9 @@ export default function AdminSupportPage() {
 
   const resolveSupport = async (id: string, reply?: string) => {
     setBusyId(id);
-    await adminFetch("/api/support", {
+    await adminFetch("/api/admin/support", {
       method: "PATCH",
-      body: JSON.stringify({ id, status: "resolved", reply: reply || undefined }),
+      body: JSON.stringify({ id, status: "replied", reply: reply || undefined }),
     });
     await refresh();
     setBusyId("");

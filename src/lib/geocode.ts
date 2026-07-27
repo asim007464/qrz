@@ -26,7 +26,7 @@ export async function geocodeLocation(
     url.searchParams.set("limit", "1");
 
     const res = await fetch(url.toString(), {
-      headers: { "User-Agent": "QRZ-Social/1.0 (ham radio social network)" },
+      headers: { "User-Agent": "QRZ/1.0 (social network)" },
       next: { revalidate: 86400 },
     });
     if (!res.ok) return null;

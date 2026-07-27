@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Users, MessageSquare, CreditCard, Megaphone,
-  Home, LogOut, Menu, X, BarChart3,
+  Home, LogOut, Menu, X, BarChart3, Newspaper, Wallet,
 } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import { supabase } from "@/lib/supabase";
@@ -14,6 +14,8 @@ import { useAuth } from "@/hooks/useAuth";
 const adminLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/posts", label: "CQ Feed", icon: Newspaper },
+  { href: "/admin/qsl", label: "QSL Cards", icon: Wallet },
   { href: "/admin/support", label: "Support", icon: MessageSquare },
   { href: "/admin/templates", label: "QSL Templates", icon: CreditCard },
   { href: "/admin/broadcast", label: "Broadcast", icon: Megaphone },

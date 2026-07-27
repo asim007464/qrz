@@ -230,7 +230,7 @@ export default function RegisterPage() {
             <h1>Welcome to QRZ!</h1>
             <p className="section-sub" style={{ textAlign: "center", lineHeight: 1.6 }}>
               73, <strong>{displayName}</strong>! Your operator profile{" "}
-              <strong className="no-cap">{callsign}</strong> is ready on the ham radio social network.
+              <strong className="no-cap">{callsign}</strong> is ready on the QRZ social network.
             </p>
             <div className="auth-welcome-box">
               <p className="auth-welcome-title">You can now:</p>
@@ -304,7 +304,7 @@ export default function RegisterPage() {
         <div className="auth-header">
           <BrandMark link={false} size="auth" />
           <h1>Create Your Account</h1>
-          <p className="section-sub">Join the QRZ ham radio social network</p>
+          <p className="section-sub">Join the QRZ social network</p>
         </div>
 
         {error && <p role="alert" className="auth-notice auth-notice--error">{error}</p>}

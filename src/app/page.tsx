@@ -70,7 +70,7 @@ export default function HomePage() {
       {!loading && !isLoggedIn ? (
         <Card className="mb-4 gradient-purple text-white border-0">
           <p className="text-xs font-medium uppercase tracking-wider text-white/70">Welcome to QRZ</p>
-          <h2 className="text-xl sm:text-2xl font-bold mt-1">Ham Radio Social Network</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mt-1">QRZ Social Network</h2>
           <p className="text-sm text-white/80 mt-2">
             Browse the feed, then sign in or register to send QSL cards, connect with operators, and manage your profile.
           </p>
@@ -146,7 +146,7 @@ export default function HomePage() {
       <Card className="mt-4 overflow-hidden p-0">
         <div className="gradient-purple p-5 text-white">
           <p className="text-xs font-medium uppercase tracking-wider opacity-70">Upcoming Event</p>
-          <h3 className="text-xl font-bold mt-1">HAMFEST INDIA 2024</h3>
+          <h3 className="text-xl font-bold mt-1">QRZ INDIA 2024</h3>
           <p className="text-sm text-white/70 mt-1">
             Join operators from across the country for workshops, demos, and DX sessions.
           </p>
@@ -169,7 +169,7 @@ export default function HomePage() {
                 </span>
               </p>
               <p className="text-sm text-white/85 mt-2">
-                Ask anything about ham radio, DX, propagation, equipment, and more.
+                Ask anything about QRZ, DX, propagation, equipment, and more.
               </p>
             </div>
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0">

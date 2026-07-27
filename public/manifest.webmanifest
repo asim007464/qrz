@@ -1,7 +1,7 @@
 {
-  "name": "QRZ — Ham Radio Social Network",
+  "name": "QRZ — Social Network",
   "short_name": "QRZ",
-  "description": "Ham radio social network for QSL cards, CQ feed, and operator connections.",
+  "description": "QRZ social network for QSL cards, CQ feed, and operator connections.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1f1230",
