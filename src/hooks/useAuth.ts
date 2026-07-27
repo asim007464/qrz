@@ -29,11 +29,34 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [serverCanAccessAdmin, setServerCanAccessAdmin] = useState<boolean | null>(null);
+
+  async function refreshAdminAccess(accessToken: string | undefined) {
+    if (!accessToken) {
+      setServerCanAccessAdmin(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/auth/access", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) {
+        setServerCanAccessAdmin(false);
+        return;
+      }
+      const body = (await res.json()) as { canAccessAdmin?: boolean };
+      setServerCanAccessAdmin(!!body.canAccessAdmin);
+    } catch {
+      setServerCanAccessAdmin(false);
+    }
+  }
 
   useEffect(() => {
     async function loadProfile(authUser: User | null) {
       if (!authUser) {
         setProfile(null);
+        setServerCanAccessAdmin(false);
         return;
       }
       const { data } = await supabase
@@ -56,13 +79,17 @@ export function useAuth() {
               fetch("/api/admin/sync-role", {
                 method: "POST",
                 headers: { Authorization: `Bearer ${session.access_token}` },
-              }).then(() => setProfile((p) => (p ? { ...p, role: "admin" } : p)));
+              }).then(() => {
+                setProfile((p) => (p ? { ...p, role: "admin" } : p));
+                void refreshAdminAccess(session.access_token);
+              });
             }
           });
         }
 
         supabase.auth.getSession().then(({ data: { session } }) => {
           if (!session?.access_token) return;
+          void refreshAdminAccess(session.access_token);
           fetch("/api/auth/sanitize-session", {
             method: "POST",
             headers: { Authorization: `Bearer ${session.access_token}` },
@@ -80,23 +107,29 @@ export function useAuth() {
           email: authUser.email ?? "",
           role: isAdminEmail(authUser.email) ? "admin" : "member",
         });
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          void refreshAdminAccess(session?.access_token);
+        });
       }
     }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      void refreshAdminAccess(session?.access_token);
       loadProfile(session?.user ?? null).finally(() => setLoading(false));
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      void refreshAdminAccess(session?.access_token);
       loadProfile(session?.user ?? null);
     });
     return () => sub.subscription.unsubscribe();
   }, []);
 
   const isSuperAdmin = isAdminEmail(user?.email) || isAdminEmail(profile?.email);
-  const canAccessAdmin = isSuperAdmin || profile?.role === "admin";
+  const clientCanAccessAdmin = isSuperAdmin || profile?.role === "admin";
+  const canAccessAdmin = serverCanAccessAdmin ?? clientCanAccessAdmin;
 
   return { user, profile, loading, isLoggedIn: !!user, canAccessAdmin, isSuperAdmin };
 }

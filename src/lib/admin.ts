@@ -8,7 +8,8 @@ function parseEmailList(raw: string | undefined): string[] {
 export function getSuperAdminEmails(): string[] {
   const fromList = parseEmailList(process.env.ADMIN_EMAILS);
   const fromSingle = parseEmailList(process.env.ADMIN_EMAIL);
-  return Array.from(new Set([...fromList, ...fromSingle, ...DEFAULT_SUPER_ADMIN_EMAILS]));
+  const fromPublic = parseEmailList(process.env.NEXT_PUBLIC_ADMIN_EMAILS);
+  return Array.from(new Set([...fromList, ...fromSingle, ...fromPublic, ...DEFAULT_SUPER_ADMIN_EMAILS]));
 }
 
 export function isAdminEmail(email: string | null | undefined): boolean {

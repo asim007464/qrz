@@ -14,10 +14,12 @@ import {
   UserPen,
   Radio,
   Download,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandMark from "@/components/BrandMark";
 import { AppIcon } from "@/components/AppIcon";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
   { href: "/", label: "QRZ", isBrand: true },
@@ -152,6 +154,7 @@ export function BottomNav() {
 
 export function DesktopSidebar() {
   const pathname = usePathname();
+  const { canAccessAdmin, isLoggedIn } = useAuth();
 
   const sidebarItems = [
     { href: "/feed", icon: Home, label: "CQ Feed" },
@@ -163,6 +166,9 @@ export function DesktopSidebar() {
     { href: "/analytics", icon: BarChart3, label: "Analytics" },
     { href: "/download", icon: Download, label: "Download App" },
     { href: "/profile/edit", icon: UserPen, label: "Edit Profile" },
+    ...(isLoggedIn && canAccessAdmin
+      ? [{ href: "/admin", icon: Shield, label: "Admin Panel" } as const]
+      : []),
     { href: "/menu", icon: Settings, label: "Settings" },
   ];
 
@@ -177,7 +183,8 @@ export function DesktopSidebar() {
         {sidebarItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== "/" && pathname.startsWith(item.href));
+            (item.href === "/admin" && pathname.startsWith("/admin")) ||
+            (item.href !== "/" && item.href !== "/admin" && pathname.startsWith(item.href));
 
           return (
             <Link
@@ -193,6 +200,7 @@ export function DesktopSidebar() {
             </Link>
           );
         })}
+
       </nav>
 
       <Link
