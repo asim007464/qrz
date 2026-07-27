@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { generateOtpCode, hashOtp, verifyOtp } from "@/lib/otp";
 import { findAccountByEmail, EMAIL_RE, OTP_RE, OTP_TTL_MS, OTP_MAX_FAILED_ATTEMPTS } from "@/lib/passwordReset";
+import { compactAuthMetadata } from "@/lib/authMetadata";
 import { sendRegistrationOtpEmail } from "@/lib/mail";
 
 export { EMAIL_RE, OTP_RE };
@@ -68,7 +69,14 @@ export async function confirmEmailWithOtp(supabase: SupabaseClient, email: strin
   if (!otpResult.ok) return otpResult;
   const account = await findAccountByEmail(supabase, email);
   if (!account) return { ok: false as const, error: "Account not found." };
-  const { error: confirmError } = await supabase.auth.admin.updateUserById(account.id, { email_confirm: true });
+
+  const { data: authUser } = await supabase.auth.admin.getUserById(account.id);
+  const metadata = (authUser?.user?.user_metadata || {}) as Record<string, unknown>;
+
+  const { error: confirmError } = await supabase.auth.admin.updateUserById(account.id, {
+    email_confirm: true,
+    user_metadata: compactAuthMetadata(metadata),
+  });
   if (confirmError) return { ok: false as const, error: "Could not verify email." };
   await supabase.from("email_verification_otps").update({ used_at: new Date().toISOString() }).eq("id", otpResult.otpRow.id);
   return { ok: true as const };

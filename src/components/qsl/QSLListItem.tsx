@@ -3,14 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MoreHorizontal } from "lucide-react";
-import type { QSLCard } from "@/types";
+import type { QSLCard, QSLTemplate } from "@/types";
 import { Badge } from "@/components/ui/Badge";
-import { getTemplateById } from "@/lib/mock-data";
+import { DEFAULT_QSL_TEMPLATE } from "@/lib/qslUtils";
 import { QSLCardTemplate } from "./QSLCardTemplate";
 import { cn } from "@/lib/utils";
 
 type QSLListItemProps = {
   card: QSLCard;
+  template?: QSLTemplate | null;
   showActions?: boolean;
 };
 
@@ -21,25 +22,19 @@ const statusVariant: Record<QSLCard["status"], "success" | "warning" | "danger" 
   sent: "default",
 };
 
-export function QSLListItem({ card, showActions = true }: QSLListItemProps) {
-  const template = getTemplateById(card.templateId);
+export function QSLListItem({ card, template, showActions = true }: QSLListItemProps) {
+  const tpl = template || DEFAULT_QSL_TEMPLATE;
 
   return (
     <Link href={`/qsl/${card.id}`} className="block">
       <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors border border-gray-100">
         <div className="w-16 h-20 rounded-lg overflow-hidden shrink-0 shadow-sm">
-          {template ? (
-            <div
-              className="w-full h-full scale-[0.35] origin-top-left"
-              style={{ width: "182%", height: "182%" }}
-            >
-              <QSLCardTemplate card={card} template={template} />
-            </div>
-          ) : (
-            <div className="w-full h-full bg-qsl-teal flex items-center justify-center text-qsl-cream text-xs font-bold">
-              QSL
-            </div>
-          )}
+          <div
+            className="w-full h-full scale-[0.35] origin-top-left"
+            style={{ width: "182%", height: "182%" }}
+          >
+            <QSLCardTemplate card={card} template={tpl} />
+          </div>
         </div>
 
         <div className="flex-1 min-w-0">

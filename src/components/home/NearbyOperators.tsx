@@ -1,59 +1,76 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { NetworkUser } from "@/types";
+import dynamic from "next/dynamic";
+import type { MapOperator } from "@/app/api/operators/route";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 
+const OperatorsMap = dynamic(
+  () => import("./OperatorsMap").then((m) => m.OperatorsMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-44 rounded-xl border border-gray-100 bg-gray-50 animate-pulse" />
+    ),
+  }
+);
+
 type NearbyOperatorsProps = {
-  operators: NetworkUser[];
+  excludeId?: string;
+  userLat?: number | null;
+  userLng?: number | null;
 };
 
-function PresenceBadge({ status }: { status: NetworkUser["status"] }) {
-  if (status === "connected") {
-    return (
-      <Badge variant="success" className="text-[10px] px-2 py-0.5">
-        Active
-      </Badge>
-    );
-  }
+export function NearbyOperators({ excludeId, userLat, userLng }: NearbyOperatorsProps) {
+  const [operators, setOperators] = useState<MapOperator[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  return (
-    <Badge variant="default" className="text-[10px] px-2 py-0.5 bg-gray-100">
-      Idle
-    </Badge>
-  );
-}
+  useEffect(() => {
+    let cancelled = false;
+    const params = new URLSearchParams({ limit: "8" });
+    if (excludeId) params.set("exclude", excludeId);
+    if (userLat != null && userLng != null) {
+      params.set("lat", String(userLat));
+      params.set("lng", String(userLng));
+    }
 
-export function NearbyOperators({ operators }: NearbyOperatorsProps) {
+    fetch(`/api/operators?${params}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: MapOperator[]) => {
+        if (!cancelled) setOperators(Array.isArray(data) ? data : []);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [excludeId, userLat, userLng]);
+
   return (
     <Card padding={false} className="overflow-hidden">
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-bold text-ham-purple tracking-wide">
-            Nearby operators
+            Operators map
           </h2>
-          <Link href="/network" className="text-xs text-ham-purple hover:underline">
+          <Link href="/search" className="text-xs text-ham-purple hover:underline">
             See All
           </Link>
         </div>
 
-        <div
-          className="h-40 sm:h-44 rounded-xl border border-gray-100 overflow-hidden mb-4"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 30% 40%, rgba(124,58,237,0.35) 0%, rgba(124,58,237,0.0) 45%), radial-gradient(circle at 70% 60%, rgba(59,130,246,0.25) 0%, rgba(59,130,246,0.0) 48%), linear-gradient(180deg, rgba(17,24,39,0.06), rgba(17,24,39,0.02))",
-          }}
-          aria-hidden
-        >
-          <div className="p-3 text-[10px] text-gray-500">
-            Map preview (mock)
-          </div>
-        </div>
+        {loading ? (
+          <div className="h-44 rounded-xl bg-gray-50 animate-pulse mb-4" />
+        ) : (
+          <OperatorsMap operators={operators} className="h-44 sm:h-52 mb-4" />
+        )}
 
         <div className="space-y-2">
-          {operators.map((u) => (
+          {operators.slice(0, 4).map((u) => (
             <Link
               key={u.id}
               href={`/profile/${u.callsign}`}
@@ -71,19 +88,29 @@ export function NearbyOperators({ operators }: NearbyOperatorsProps) {
                   <span className="font-semibold text-ham-purple truncate">
                     {u.callsign}
                   </span>
-                  <PresenceBadge status={u.status} />
+                  {u.onAir ? (
+                    <Badge variant="success" className="text-[10px] px-2 py-0.5">
+                      ON AIR
+                    </Badge>
+                  ) : (
+                    <Badge variant="default" className="text-[10px] px-2 py-0.5 bg-gray-100">
+                      Idle
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-xs text-gray-500 truncate">{u.location}</p>
-                <p className="text-[10px] text-gray-400">
-                  {(u.distanceKm ?? 0).toFixed(1)} km · Added {u.connectedAt}
-                </p>
+                {u.distanceKm != null && (
+                  <p className="text-[10px] text-gray-400">
+                    {u.distanceKm.toFixed(1)} km away
+                  </p>
+                )}
               </div>
             </Link>
           ))}
 
-          {operators.length === 0 && (
+          {!loading && operators.length === 0 && (
             <p className="text-sm text-center text-gray-400 py-6">
-              No nearby operators
+              No operators on the map yet
             </p>
           )}
         </div>
@@ -91,4 +118,3 @@ export function NearbyOperators({ operators }: NearbyOperatorsProps) {
     </Card>
   );
 }
-

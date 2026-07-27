@@ -20,7 +20,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { ProfileBanner } from "@/components/layout/ProfileBanner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { currentUser } from "@/lib/mock-data";
+import { avatarForCallsign, EMPTY_PROFILE } from "@/lib/profileDefaults";
 
 const menuItems = [
   { href: "/profile/edit", icon: UserPen, label: "Edit Profile" },
@@ -39,12 +39,16 @@ export default function MenuPage() {
 
   const displayUser = profile
     ? {
-        ...currentUser,
-        callsign: profile.callsign || currentUser.callsign,
-        name: profile.name || currentUser.name,
-        email: profile.email || currentUser.email,
+        ...EMPTY_PROFILE,
+        callsign: profile.callsign || "",
+        name: profile.name || profile.callsign || "",
+        email: profile.email || "",
+        avatar: avatarForCallsign(profile.callsign, profile.avatar_url),
+        location: profile.location || "",
+        country: profile.country || "",
+        ituZone: profile.itu_zone || "",
       }
-    : currentUser;
+    : EMPTY_PROFILE;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

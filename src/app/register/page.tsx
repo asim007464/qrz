@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Camera, CheckCircle2, Loader2, ArrowRight } from "lucide-react";
+import { Camera, CheckCircle2, Loader2, ArrowRight, MapPin } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import { PasswordInput, passwordFieldAttrs } from "@/components/PasswordInput";
 import { checkPassword } from "@/lib/passwordUtils";
 import { getSafeRedirectPath } from "@/lib/authRedirect";
+import { MAX_IMAGE_BYTES, MAX_IMAGE_SIZE_LABEL } from "@/lib/constants";
+import { compressImageFile } from "@/lib/compressImage";
 
 type Step = "form" | "otp" | "done";
 
@@ -23,6 +25,9 @@ export default function RegisterPage() {
   const [activeMode, setActiveMode] = useState("USB");
   const [cqZone, setCqZone] = useState("CQ Zone 22");
   const [grid, setGrid] = useState("MK7QB");
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [locating, setLocating] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -40,6 +45,50 @@ export default function RegisterPage() {
     const params = new URLSearchParams(window.location.search);
     setRedirectTo(getSafeRedirectPath(params.get("next")));
   }, []);
+
+  async function useMyLocation() {
+    if (!navigator.geolocation) {
+      setError("Location is not supported in this browser.");
+      return;
+    }
+    setLocating(true);
+    setError("");
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        setLatitude(pos.coords.latitude);
+        setLongitude(pos.coords.longitude);
+        try {
+          const url = new URL("https://nominatim.openstreetmap.org/reverse");
+          url.searchParams.set("lat", String(pos.coords.latitude));
+          url.searchParams.set("lon", String(pos.coords.longitude));
+          url.searchParams.set("format", "json");
+          const res = await fetch(url.toString(), {
+            headers: { "User-Agent": "QRZ-Social/1.0" },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const city =
+              data.address?.city ||
+              data.address?.town ||
+              data.address?.village ||
+              data.address?.state ||
+              "";
+            const countryName = data.address?.country || "";
+            if (city) setLocation(city);
+            if (countryName) setCountry(countryName);
+          }
+        } catch {
+          /* coords still saved */
+        }
+        setLocating(false);
+      },
+      () => {
+        setError("Could not get your location. Enter it manually.");
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 15000 }
+    );
+  }
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -74,6 +123,8 @@ export default function RegisterPage() {
           activeMode: activeMode.trim().toUpperCase(),
           cqZone: cqZone.trim(),
           grid: grid.trim().toUpperCase(),
+          latitude,
+          longitude,
           password,
         }),
       });
@@ -125,16 +176,19 @@ export default function RegisterPage() {
       setError("Upload a valid image file.");
       return;
     }
-    if (file.size > 750 * 1024) {
-      setError("Image must be smaller than 750KB.");
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError(`Image must be smaller than ${MAX_IMAGE_SIZE_LABEL}.`);
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setAvatarUrl(String(reader.result || ""));
-      setError("");
-    };
-    reader.readAsDataURL(file);
+    void (async () => {
+      try {
+        const dataUrl = await compressImageFile(file);
+        setAvatarUrl(dataUrl);
+        setError("");
+      } catch {
+        setError("Could not process that image. Try a smaller photo.");
+      }
+    })();
   }
 
   async function verifyOtp() {
@@ -299,6 +353,19 @@ export default function RegisterPage() {
               <input value={country} onChange={(e) => setCountry(e.target.value)} required placeholder="USA" />
             </label>
           </div>
+          <button
+            type="button"
+            className="btn btn-secondary w-full flex items-center justify-center gap-2"
+            onClick={() => void useMyLocation()}
+            disabled={locating}
+          >
+            {locating ? <Loader2 size={15} className="spin" /> : <MapPin size={15} />}
+            {locating
+              ? "Getting location…"
+              : latitude != null
+                ? `Location set (${latitude.toFixed(2)}, ${longitude?.toFixed(2)})`
+                : "Use my location on map"}
+          </button>
           <div className="auth-grid-3">
             <label className="field">
               <span>Band</span>

@@ -8,8 +8,15 @@ function getAuthTransporter() {
   return nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
 }
 
+export function getNotifyEmails(): string[] {
+  const raw = process.env.NOTIFY_EMAIL?.trim() || process.env.SMTP_EMAIL?.trim();
+  if (!raw) return [];
+  return raw.split(/[,;\s]+/).map((e) => e.trim()).filter(Boolean);
+}
+
 export function getNotifyEmail(): string | null {
-  return process.env.NOTIFY_EMAIL?.trim() || process.env.SMTP_EMAIL?.trim() || null;
+  const emails = getNotifyEmails();
+  return emails.length ? emails.join(", ") : null;
 }
 
 export function notifyAdminInBackground(send: (to: string) => Promise<void>): void {

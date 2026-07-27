@@ -10,8 +10,8 @@ import { Textarea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-
-const MAX_BYTES = 750 * 1024;
+import { MAX_IMAGE_BYTES, MAX_IMAGE_SIZE_LABEL } from "@/lib/constants";
+import { compressImageFile } from "@/lib/compressImage";
 
 export default function MakePostPage() {
   const router = useRouter();
@@ -38,18 +38,20 @@ export default function MakePostPage() {
       setError("Choose a valid image file.");
       return;
     }
-    if (file.size > MAX_BYTES) {
-      setError("Image must be smaller than 750KB.");
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError(`Image must be smaller than ${MAX_IMAGE_SIZE_LABEL}.`);
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageUrl(String(reader.result || ""));
-      setError("");
-    };
-    reader.onerror = () => setError("Could not read that image.");
-    reader.readAsDataURL(file);
+    void (async () => {
+      try {
+        const dataUrl = await compressImageFile(file);
+        setImageUrl(dataUrl);
+        setError("");
+      } catch {
+        setError("Could not process that image. Try a smaller photo.");
+      }
+    })();
   };
 
   const publish = async () => {

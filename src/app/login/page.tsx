@@ -123,6 +123,15 @@ export default function LoginPage() {
         }
       }
 
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        await fetch("/api/auth/sanitize-session", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        }).catch(() => null);
+        await supabase.auth.refreshSession();
+      }
+
       showToast("Signed in successfully!");
       router.refresh();
       window.setTimeout(() => {

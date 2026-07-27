@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Download } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { AppIcon } from "@/components/AppIcon";
 import { cn } from "@/lib/utils";
 
 type DownloadAppCardProps = {
@@ -26,12 +27,9 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
             <p className="text-xs font-medium uppercase tracking-wider text-white/70">
               Download the app
             </p>
-            <h3 className="text-lg sm:text-xl font-bold mt-1">
-              HamSocial for iOS & Android
-            </h3>
+            <h3 className="text-lg sm:text-xl font-bold mt-1">QRZ for iOS & Android</h3>
             <p className="text-sm text-white/80 mt-2">
-              Upload your profile, share QSL cards, build connections, and track
-              views/searches.
+              Upload your profile, share QSL cards, build connections, and track views/searches.
             </p>
           </div>
 
@@ -39,8 +37,9 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
             <div className="relative w-40 h-72 rounded-[2rem] border border-white/25 bg-white/10 overflow-hidden backdrop-blur-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.28),transparent_55%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
 
-              <div className="absolute top-3 left-3 z-10 text-[10px] font-bold tracking-wide text-white/90">
-                HAM
+              <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5">
+                <AppIcon size={22} className="rounded-md" />
+                <span className="text-[10px] font-bold tracking-wide text-white/90">QRZ</span>
               </div>
               <div className="absolute top-2 right-2 z-10 w-10 h-10 rounded-full bg-white/15 flex items-center justify-center border border-white/20">
                 <Download className="w-5 h-5 text-white" />
@@ -57,17 +56,12 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2e1a47]/70 via-transparent to-transparent" />
               </div>
 
-              <div className="absolute bottom-3 left-3 right-3 z-10">
-                <div className="h-10 rounded-2xl bg-white/20 border border-white/15 backdrop-blur-sm overflow-hidden relative">
-                  <Image
-                    src={MOCK_IMAGE}
-                    alt=""
-                    fill
-                    className="object-cover opacity-40"
-                    sizes="140px"
-                  />
+              <div className="absolute bottom-3 left-3 right-3 z-10 flex items-center gap-2">
+                <AppIcon size={36} className="rounded-xl shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="h-2.5 rounded-md bg-white/20 border border-white/10" />
+                  <div className="h-2 mt-1.5 rounded-md bg-white/10 border border-white/10 w-2/3" />
                 </div>
-                <div className="h-3 mt-2 rounded-xl bg-white/15 border border-white/10" />
               </div>
             </div>
           </div>
@@ -75,9 +69,9 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
       </div>
 
       <div className="p-4 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-        <div className="text-sm text-gray-600">
-          If you want, tell me your real APK/App Store link and I’ll replace the
-          placeholders.
+        <div className="flex items-center gap-3 text-sm text-gray-600">
+          <AppIcon size={40} className="shrink-0 sm:hidden" />
+          <span>Get QRZ on your phone with the official app icon on your home screen.</span>
         </div>
         <div className="flex gap-2">
           <Link href="/download?platform=android" className="flex-1 sm:flex-none">

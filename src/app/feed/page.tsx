@@ -9,13 +9,12 @@ import { ActivityFeed } from "@/components/home/ActivityFeed";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useAuth } from "@/hooks/useAuth";
-import { activities as mockActivities } from "@/lib/mock-data";
 import { fetchFeedItems } from "@/lib/feed";
 import type { ActivityItem } from "@/types";
 
 export default function CQFeedPage() {
   const { isLoggedIn } = useAuth();
-  const [feedItems, setFeedItems] = useState<ActivityItem[]>(mockActivities);
+  const [feedItems, setFeedItems] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +23,7 @@ export default function CQFeedPage() {
     fetchFeedItems(100)
       .then((items) => {
         if (cancelled) return;
-        if (items.length > 0) setFeedItems(items);
+        setFeedItems(items);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

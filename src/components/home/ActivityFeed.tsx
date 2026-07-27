@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Input";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { currentUser } from "@/lib/mock-data";
+import { avatarForCallsign } from "@/lib/profileDefaults";
 import type { ActivityItem, ActivityReply } from "@/types";
 
 const UUID_RE =
@@ -31,9 +31,9 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
   const [errorByPost, setErrorByPost] = useState<Record<string, string>>({});
 
   const replyAs = {
-    callsign: profile?.callsign || currentUser.callsign,
-    name: profile?.name || currentUser.name,
-    avatar: profile?.avatar_url || currentUser.avatar,
+    callsign: profile?.callsign || "YOU",
+    name: profile?.name || "Operator",
+    avatar: avatarForCallsign(profile?.callsign || "YOU", profile?.avatar_url),
   };
 
   const toggleReply = (postId: string) => {

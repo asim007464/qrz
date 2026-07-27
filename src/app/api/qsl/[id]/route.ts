@@ -18,6 +18,31 @@ async function getAuthenticatedUser(request: Request) {
   return user ?? null;
 }
 
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const user = await getAuthenticatedUser(request);
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id } = await params;
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("qsl_cards")
+    .select("*, qsl_templates(id, name, background_color, accent_color, border_color, background_image)")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!data) return NextResponse.json({ error: "Not found." }, { status: 404 });
+
+  if (data.from_user_id !== user.id && data.to_user_id !== user.id) {
+    return NextResponse.json({ error: "Not allowed." }, { status: 403 });
+  }
+
+  return NextResponse.json(data);
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }

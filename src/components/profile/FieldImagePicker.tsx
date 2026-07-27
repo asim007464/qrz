@@ -2,8 +2,8 @@
 
 import { useRef, useState } from "react";
 import { ImagePlus, Trash2, Loader2 } from "lucide-react";
-
-const MAX_BYTES = 750 * 1024;
+import { MAX_IMAGE_BYTES, MAX_IMAGE_SIZE_LABEL } from "@/lib/constants";
+import { compressImageFile } from "@/lib/compressImage";
 
 type FieldImagePickerProps = {
   label?: string;
@@ -29,15 +29,15 @@ export function FieldImagePicker({
       setError("Choose a valid image file.");
       return;
     }
-    if (file.size > MAX_BYTES) {
-      setError("Image must be smaller than 750KB.");
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError(`Image must be smaller than ${MAX_IMAGE_SIZE_LABEL}.`);
       return;
     }
 
     setBusy(true);
     setError("");
     try {
-      const dataUrl = await readAsDataUrl(file);
+      const dataUrl = await compressImageFile(file);
       await onChange(dataUrl);
     } catch {
       setError("Could not read that image.");
@@ -91,13 +91,4 @@ export function FieldImagePicker({
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
-}
-
-function readAsDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result || ""));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Menu, Bell, Scan, Send, Inbox, Share2 } from "lucide-react";
@@ -8,8 +8,10 @@ import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Tabs } from "@/components/ui/Tabs";
 import { QSLListItem, QSLStatCard } from "@/components/qsl/QSLListItem";
-import { qslCards } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+import { mapQslCard, mapQslTemplate, type DbQslRow } from "@/lib/qslUtils";
+import type { QSLCard, QSLTemplate } from "@/types";
 
 const quickActions = [
   { icon: Scan, label: "Scan", href: "/add" },
@@ -18,23 +20,65 @@ const quickActions = [
   { icon: Share2, label: "Share", action: "share" as const },
 ];
 
+type CardWithTemplate = { card: QSLCard; template: QSLTemplate | null };
+
 export default function QSLWalletPage() {
   const router = useRouter();
-  const { profile } = useAuth();
+  const { profile, isLoggedIn, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState("my");
+  const [items, setItems] = useState<CardWithTemplate[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const callsign = profile?.callsign || "K2ABC";
+  const callsign = profile?.callsign || "";
 
-  const filtered = qslCards.filter((c) => {
-    if (activeTab === "sent") return c.fromCallsign === callsign;
-    if (activeTab === "received") return c.toCallsign === callsign;
-    return true;
-  });
+  const loadCards = useCallback(async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
+
+    const direction =
+      activeTab === "sent" ? "sent" : activeTab === "received" ? "received" : "all";
+    const res = await fetch(`/api/qsl?direction=${direction}`, {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    });
+    if (!res.ok) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
+    const rows = (await res.json()) as DbQslRow[];
+    setItems(
+      rows.map((row) => ({
+        card: mapQslCard(row),
+        template: mapQslTemplate(row.qsl_templates),
+      }))
+    );
+    setLoading(false);
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isLoggedIn) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    void loadCards();
+  }, [authLoading, isLoggedIn, loadCards]);
+
+  const allCards = items.map((i) => i.card);
+  const sentCount = allCards.filter((c) => c.fromCallsign === callsign).length;
+  const receivedCount = allCards.filter((c) => c.toCallsign === callsign).length;
 
   const tabs = [
-    { id: "my", label: "My QSLs", count: qslCards.length },
-    { id: "sent", label: "Sent", count: qslCards.filter((c) => c.fromCallsign === callsign).length },
-    { id: "received", label: "Received", count: qslCards.filter((c) => c.toCallsign === callsign).length },
+    { id: "my", label: "My QSLs", count: allCards.length },
+    { id: "sent", label: "Sent", count: sentCount },
+    { id: "received", label: "Received", count: receivedCount },
   ];
 
   const handleQuick = async (item: (typeof quickActions)[number]) => {
@@ -46,6 +90,20 @@ export default function QSLWalletPage() {
     }
     if (item.href) router.push(item.href);
   };
+
+  if (!authLoading && !isLoggedIn) {
+    return (
+      <AppShell>
+        <PageHeader title="QSL Wallet" />
+        <p className="text-center text-gray-500 text-sm py-8">
+          <Link href="/login?next=/qsl" className="text-ham-accent">
+            Sign in
+          </Link>{" "}
+          to view your QSL cards.
+        </p>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>
@@ -64,10 +122,14 @@ export default function QSLWalletPage() {
       />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-        <QSLStatCard label="Total" value={qslCards.length} />
-        <QSLStatCard label="Sent" value={tabs[1].count ?? 0} />
-        <QSLStatCard label="Received" value={tabs[2].count ?? 0} />
-        <QSLStatCard label="New" value={qslCards.filter((c) => c.status === "pending").length} highlight />
+        <QSLStatCard label="Total" value={allCards.length} />
+        <QSLStatCard label="Sent" value={sentCount} />
+        <QSLStatCard label="Received" value={receivedCount} />
+        <QSLStatCard
+          label="New"
+          value={allCards.filter((c) => c.status === "pending").length}
+          highlight
+        />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 bg-white rounded-2xl p-3 card-shadow border border-gray-100">
@@ -89,10 +151,19 @@ export default function QSLWalletPage() {
       <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} className="mb-4" />
 
       <div className="bg-white rounded-2xl card-shadow border border-gray-100 divide-y divide-gray-50">
-        {filtered.length === 0 ? (
-          <p className="p-6 text-center text-gray-500 text-sm">No QSL cards yet. <Link href="/qsl/send" className="text-ham-accent">Send one</Link></p>
+        {loading ? (
+          <p className="p-6 text-center text-gray-500 text-sm">Loading QSL cards…</p>
+        ) : items.length === 0 ? (
+          <p className="p-6 text-center text-gray-500 text-sm">
+            No QSL cards yet.{" "}
+            <Link href="/qsl/send" className="text-ham-accent">
+              Send one
+            </Link>
+          </p>
         ) : (
-          filtered.map((card) => <QSLListItem key={card.id} card={card} />)
+          items.map(({ card, template }) => (
+            <QSLListItem key={card.id} card={card} template={template} />
+          ))
         )}
       </div>
     </AppShell>

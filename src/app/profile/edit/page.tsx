@@ -12,34 +12,36 @@ import { Input, Textarea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { BackgroundPicker } from "@/components/profile/BackgroundPicker";
 import { FieldImagePicker } from "@/components/profile/FieldImagePicker";
-import { currentUser, backgroundPresets } from "@/lib/mock-data";
+import { backgroundPresets } from "@/lib/constants";
+import { avatarForCallsign, EMPTY_PROFILE } from "@/lib/profileDefaults";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 
 export default function EditProfilePage() {
   const router = useRouter();
-  const { isLoggedIn, loading: authLoading } = useAuth();
+  const { isLoggedIn, loading: authLoading, profile } = useAuth();
   const [selectedBg, setSelectedBg] = useState("bg1");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState({
-    callsign: currentUser.callsign,
-    name: currentUser.name,
-    location: currentUser.location,
-    country: currentUser.country,
-    itu_zone: currentUser.ituZone,
-    bio: currentUser.bio,
-    station_setup: currentUser.stationSetup,
-    antenna_setup: currentUser.antennaSetup,
-    qsl_info: currentUser.qslInfo,
+    callsign: "",
+    name: "",
+    location: "",
+    country: "",
+    itu_zone: "",
+    bio: "",
+    station_setup: "",
+    antenna_setup: "",
+    qsl_info: "",
     bio_image: null as string | null,
     station_setup_image: null as string | null,
     antenna_setup_image: null as string | null,
     qsl_info_image: null as string | null,
-    phone: currentUser.phone,
-    website: currentUser.socialLinks.website || "",
+    phone: "",
+    website: "",
     hrdlog_callsign: "",
   });
+  const avatarSrc = avatarForCallsign(form.callsign || profile?.callsign || "qrz", profile?.avatar_url);
 
   useEffect(() => {
     if (authLoading) return;
@@ -116,7 +118,7 @@ export default function EditProfilePage() {
         <Card className="flex flex-col items-center">
           <div className="relative">
             <Image
-              src={currentUser.avatar}
+              src={avatarSrc}
               alt="Avatar"
               width={96}
               height={96}

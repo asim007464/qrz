@@ -11,25 +11,47 @@ import { DownloadAppCard } from "@/components/home/DownloadAppCard";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
-import { currentUser, activities as mockActivities, networkUsers } from "@/lib/mock-data";
 import { fetchFeedItems } from "@/lib/feed";
-import type { ActivityItem } from "@/types";
+import { avatarForCallsign, EMPTY_PROFILE } from "@/lib/profileDefaults";
+import type { ActivityItem, UserProfile } from "@/types";
 
 const PREVIEW_COUNT = 3;
 
+function profileFromAuth(
+  profile: NonNullable<ReturnType<typeof useAuth>["profile"]>,
+  userId?: string
+): UserProfile {
+  return {
+    ...EMPTY_PROFILE,
+    id: userId || "",
+    callsign: profile.callsign || "",
+    name: profile.name || profile.callsign || "",
+    email: profile.email || "",
+    avatar: avatarForCallsign(profile.callsign, profile.avatar_url),
+    location: profile.location || "",
+    country: profile.country || "",
+    ituZone: profile.itu_zone || "",
+    activeBand: profile.active_band || undefined,
+    activeFrequency: profile.active_frequency || undefined,
+    activeMode: profile.active_mode || undefined,
+    cqZone: profile.cq_zone || undefined,
+    grid: profile.grid || undefined,
+    hrdlogCallsign: profile.hrdlog_callsign || undefined,
+  };
+}
+
 export default function HomePage() {
-  const { isLoggedIn, profile, loading } = useAuth();
-  const [feedItems, setFeedItems] = useState<ActivityItem[]>(mockActivities);
+  const { isLoggedIn, profile, user, loading } = useAuth();
+  const [feedItems, setFeedItems] = useState<ActivityItem[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     fetchFeedItems(50)
       .then((items) => {
-        if (cancelled || items.length === 0) return;
-        setFeedItems(items);
+        if (!cancelled) setFeedItems(items);
       })
       .catch(() => {
-        /* keep mock feed */
+        if (!cancelled) setFeedItems([]);
       });
     return () => {
       cancelled = true;
@@ -40,23 +62,8 @@ export default function HomePage() {
   const hasMore = feedItems.length > PREVIEW_COUNT;
 
   const displayUser = profile
-    ? {
-        ...currentUser,
-        callsign: profile.callsign || currentUser.callsign,
-        name: profile.name || currentUser.name,
-        email: profile.email || currentUser.email,
-        avatar: profile.avatar_url || currentUser.avatar,
-        location: profile.location || currentUser.location,
-        country: profile.country || currentUser.country,
-        ituZone: profile.itu_zone || currentUser.ituZone,
-        activeBand: profile.active_band || currentUser.activeBand,
-        activeFrequency: profile.active_frequency || currentUser.activeFrequency,
-        activeMode: profile.active_mode || currentUser.activeMode,
-        cqZone: profile.cq_zone || currentUser.cqZone,
-        grid: profile.grid || currentUser.grid,
-        hrdlogCallsign: profile.hrdlog_callsign || undefined,
-      }
-    : currentUser;
+    ? profileFromAuth(profile, user?.id)
+    : EMPTY_PROFILE;
 
   return (
     <AppShell>
@@ -81,7 +88,7 @@ export default function HomePage() {
           </div>
         </Card>
       ) : (
-        <ProfileBanner user={displayUser} className="mb-4" />
+        profile && <ProfileBanner user={displayUser} className="mb-4" />
       )}
 
       <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
@@ -104,10 +111,19 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-3">
-            <ActivityFeed
-              key={previewItems.map((a) => a.id).join(",")}
-              activities={previewItems}
-            />
+            {previewItems.length > 0 ? (
+              <ActivityFeed
+                key={previewItems.map((a) => a.id).join(",")}
+                activities={previewItems}
+              />
+            ) : (
+              <Card className="text-center py-8 text-sm text-gray-500">
+                No posts yet.{" "}
+                <Link href={isLoggedIn ? "/add/post" : "/register"} className="text-ham-purple underline">
+                  Be the first to post
+                </Link>
+              </Card>
+            )}
             <Link
               href="/feed"
               className="flex items-center justify-center gap-1 rounded-xl border border-dashed border-gray-200 bg-white py-2.5 text-xs font-medium text-ham-purple hover:border-ham-purple/30 hover:bg-ham-purple/5 transition-colors"
@@ -120,7 +136,9 @@ export default function HomePage() {
 
         <div className="lg:pl-1">
           <NearbyOperators
-            operators={networkUsers.slice(0, 4).filter((u) => u.id !== displayUser.id)}
+            excludeId={user?.id}
+            userLat={profile?.latitude}
+            userLng={profile?.longitude}
           />
         </div>
       </div>

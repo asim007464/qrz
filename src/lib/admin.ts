@@ -1,4 +1,4 @@
-const DEFAULT_SUPER_ADMIN_EMAILS = ["qrzinfo@gmail.com"] as const;
+const DEFAULT_SUPER_ADMIN_EMAILS = ["qrzinfo@gmail.com", "ehamhub@gmail.com"] as const;
 
 function parseEmailList(raw: string | undefined): string[] {
   if (!raw?.trim()) return [];

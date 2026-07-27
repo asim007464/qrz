@@ -9,7 +9,8 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { BackgroundPicker } from "@/components/profile/BackgroundPicker";
-import { backgroundPresets, qslTemplates as mockTemplates } from "@/lib/mock-data";
+import { backgroundPresets } from "@/lib/constants";
+import { DEFAULT_QSL_TEMPLATE } from "@/lib/qslUtils";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
@@ -46,40 +47,24 @@ export default function SendQSLPage() {
       .then((r) => (r.ok ? r.json() : []))
       .then((data: Template[] | { templates: Template[] }) => {
         const list = Array.isArray(data) ? data : data.templates ?? [];
-        const mapped = list.length ? list : mockTemplates.map((t) => ({
-          id: t.id,
-          name: t.name,
-          background_color: t.backgroundColor,
-          accent_color: t.accentColor,
-          border_color: t.borderColor,
-          background_image: t.backgroundImage,
-        }));
-        setTemplates(mapped);
-        if (mapped[0]) setSelectedTemplate(mapped[0].id);
+        setTemplates(list);
+        if (list[0]) setSelectedTemplate(list[0].id);
       })
-      .catch(() => {
-        const mapped = mockTemplates.map((t) => ({
-          id: t.id,
-          name: t.name,
-          background_color: t.backgroundColor,
-          accent_color: t.accentColor,
-          border_color: t.borderColor,
-        }));
-        setTemplates(mapped);
-        setSelectedTemplate(mockTemplates[0].id);
-      });
+      .catch(() => setTemplates([]));
   }, []);
 
   const template = templates.find((t) => t.id === selectedTemplate) ?? templates[0];
-  const uiTemplate = template ? {
-    id: template.id,
-    name: template.name,
-    backgroundColor: template.background_color,
-    accentColor: template.accent_color,
-    borderColor: template.border_color,
-    backgroundImage: template.background_image ?? undefined,
-    isAdminCreated: true,
-  } : mockTemplates[0];
+  const uiTemplate = template
+    ? {
+        id: template.id,
+        name: template.name,
+        backgroundColor: template.background_color,
+        accentColor: template.accent_color,
+        borderColor: template.border_color,
+        backgroundImage: template.background_image ?? undefined,
+        isAdminCreated: true,
+      }
+    : DEFAULT_QSL_TEMPLATE;
 
   const cardData = {
     fromCallsign: profile?.callsign || "CALL",

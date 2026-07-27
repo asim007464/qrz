@@ -9,7 +9,6 @@ import { ProfileFieldCard } from "@/components/profile/ProfileFieldCard";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ConnectButton } from "@/components/network/ConnectButton";
-import { getUserByCallsign } from "@/lib/mock-data";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { UserProfile } from "@/types";
 
@@ -106,7 +105,7 @@ async function getSupabaseProfile(callsign: string): Promise<UserProfile | null>
 
 export default async function ProfilePage({ params }: Props) {
   const { callsign } = await params;
-  const user = (await getSupabaseProfile(callsign)) || getUserByCallsign(callsign);
+  const user = await getSupabaseProfile(callsign);
 
   if (!user) notFound();
 

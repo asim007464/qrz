@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   description:
     "QRZ is the social networking platform for ham radio enthusiasts. Share QSL cards, connect with operators worldwide.",
   applicationName: "QRZ",
+  icons: {
+    icon: [{ url: "/qrz-app-icon.png", type: "image/png" }],
+    apple: [{ url: "/qrz-app-icon.png", type: "image/png" }],
+    shortcut: "/qrz-app-icon.png",
+  },
+  manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {

@@ -16,6 +16,8 @@ import {
   Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import BrandMark from "@/components/BrandMark";
+import { AppIcon } from "@/components/AppIcon";
 
 const navItems = [
   { href: "/", label: "QRZ", isBrand: true },
@@ -41,9 +43,8 @@ export function MobileTopBar() {
   return (
     <header className="md:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 safe-area-pt">
       <div className="flex items-center justify-between gap-3 px-3 sm:px-4 h-14">
-        <Link href="/" className="min-w-0">
-          <p className="font-bold text-ham-purple text-lg leading-tight">QRZ</p>
-          <p className="text-[10px] text-gray-400 truncate">Ham Radio Social</p>
+        <Link href="/" className="min-w-0 flex items-center gap-2">
+          <BrandMark link={false} size="nav" className="h-8 w-auto max-w-[130px]" />
         </Link>
         <div className="flex items-center gap-1 shrink-0">
           <Link
@@ -112,17 +113,18 @@ export function BottomNav() {
                 href={item.href}
                 className={cn(
                   "flex flex-col items-center justify-center gap-0.5 px-2 sm:px-3 py-1.5 rounded-xl transition-colors min-w-0 flex-1 max-w-[4.5rem]",
-                  isActive ? "text-ham-purple" : "text-gray-400"
+                  isActive ? "ring-2 ring-ham-accent/40 rounded-xl" : "opacity-80"
                 )}
                 aria-label="QRZ Home"
               >
+                <AppIcon size={28} className="rounded-lg" />
                 <span
                   className={cn(
-                    "text-[12px] sm:text-[13px] font-black tracking-[0.16em] leading-none",
+                    "text-[10px] font-medium truncate w-full text-center",
                     isActive ? "text-ham-purple" : "text-gray-500"
                   )}
                 >
-                  QRZ
+                  Home
                 </span>
               </Link>
             );
@@ -167,8 +169,8 @@ export function DesktopSidebar() {
   return (
     <aside className="app-sidebar hidden md:flex flex-col w-56 lg:w-64 bg-ham-purple-dark text-white p-3 lg:p-4">
       <Link href="/" className="mb-6 lg:mb-8 px-2 block shrink-0">
-        <h1 className="text-lg lg:text-xl font-bold tracking-wide">QRZ</h1>
-        <p className="text-white/50 text-xs mt-1">Ham Radio Social Network</p>
+        <BrandMark link={false} size="nav" className="h-10 w-auto max-w-[160px]" />
+        <p className="text-white/50 text-xs mt-2">Ham Radio Social Network</p>
       </Link>
 
       <nav className="flex-1 min-h-0 space-y-1 overflow-y-auto">

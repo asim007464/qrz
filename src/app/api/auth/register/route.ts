@@ -5,6 +5,8 @@ import { issueEmailVerificationOtp } from "@/lib/emailVerification";
 import { toMailUserError } from "@/lib/mail";
 import { getAuthCallbackUrl } from "@/lib/siteUrl";
 import { enforceRateLimit } from "@/lib/rateLimit";
+import { geocodeLocation, parseCoords } from "@/lib/geocode";
+import { compactAuthMetadata } from "@/lib/authMetadata";
 import { NextResponse } from "next/server";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,6 +31,9 @@ export async function POST(request: Request) {
     const activeMode = String(body.activeMode ?? body.active_mode ?? "").trim().toUpperCase();
     const cqZone = String(body.cqZone ?? body.cq_zone ?? "").trim();
     const grid = String(body.grid ?? "").trim().toUpperCase();
+    const coords =
+      parseCoords(body.latitude ?? body.lat, body.longitude ?? body.lng) ??
+      (await geocodeLocation(location, country));
 
     if (!displayName) {
       return NextResponse.json({ error: "Display name is required." }, { status: 400 });
@@ -79,7 +84,7 @@ export async function POST(request: Request) {
       password,
       options: {
         redirectTo,
-        data: { display_name: displayName, callsign, avatar_url: avatarUrl },
+        data: { display_name: displayName, callsign },
       },
     });
 
@@ -117,6 +122,8 @@ export async function POST(request: Request) {
       active_mode: activeMode,
       cq_zone: cqZone,
       grid,
+      latitude: coords?.latitude ?? null,
+      longitude: coords?.longitude ?? null,
       role,
     });
 
@@ -124,6 +131,10 @@ export async function POST(request: Request) {
       console.error("Profile upsert error:", profileError);
       throw new Error("Account was created but profile setup failed. Please contact support.");
     }
+
+    await supabase.auth.admin.updateUserById(userId, {
+      user_metadata: compactAuthMetadata({ display_name: displayName, callsign }),
+    });
 
     const otpResult = await issueEmailVerificationOtp(supabase, email, displayName);
 

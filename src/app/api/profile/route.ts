@@ -21,7 +21,7 @@ async function getAuthenticatedUser(request: Request) {
 }
 
 const PROFILE_FIELDS =
-  "id, name, callsign, email, bio, avatar_url, location, country, itu_zone, active_band, active_frequency, active_mode, cq_zone, grid, station_setup, antenna_setup, qsl_info, bio_image, station_setup_image, antenna_setup_image, qsl_info_image, phone, website, qrz, hrdlog_callsign, on_air, background_image, social_links, role, is_blocked, profile_views, profile_searches, cards_received, cards_sent, created_at, updated_at";
+  "id, name, callsign, email, bio, avatar_url, location, country, itu_zone, active_band, active_frequency, active_mode, cq_zone, grid, station_setup, antenna_setup, qsl_info, bio_image, station_setup_image, antenna_setup_image, qsl_info_image, phone, website, qrz, hrdlog_callsign, latitude, longitude, on_air, background_image, social_links, role, is_blocked, profile_views, profile_searches, cards_received, cards_sent, created_at, updated_at";
 
 export async function GET(request: Request) {
   const user = await getAuthenticatedUser(request);
@@ -93,6 +93,8 @@ export async function PATCH(request: Request) {
     qrz: "qrz",
     hrdlog_callsign: "hrdlog_callsign",
     hrdlogCallsign: "hrdlog_callsign",
+    latitude: "latitude",
+    longitude: "longitude",
     on_air: "on_air",
     onAir: "on_air",
     background_image: "background_image",

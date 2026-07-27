@@ -21,6 +21,8 @@ export interface UserProfile {
   cq_zone?: string | null;
   grid?: string | null;
   hrdlog_callsign?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export function useAuth() {
@@ -36,7 +38,7 @@ export function useAuth() {
       }
       const { data } = await supabase
         .from("profiles")
-        .select("name, callsign, email, role, is_blocked, avatar_url, location, country, itu_zone, active_band, active_frequency, active_mode, cq_zone, grid, hrdlog_callsign")
+        .select("name, callsign, email, role, is_blocked, avatar_url, location, country, itu_zone, active_band, active_frequency, active_mode, cq_zone, grid, hrdlog_callsign, latitude, longitude")
         .eq("id", authUser.id)
         .maybeSingle();
 
@@ -58,6 +60,19 @@ export function useAuth() {
             }
           });
         }
+
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (!session?.access_token) return;
+          fetch("/api/auth/sanitize-session", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          })
+            .then((res) => (res.ok ? res.json() : null))
+            .then((body) => {
+              if (body?.cleaned) void supabase.auth.refreshSession();
+            })
+            .catch(() => null);
+        });
       } else {
         setProfile({
           name: authUser.user_metadata?.display_name ?? "",
