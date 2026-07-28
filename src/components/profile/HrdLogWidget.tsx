@@ -47,22 +47,31 @@ type HrdLogWidgetProps = {
   callsign: string;
   lastQsoCount?: number;
   className?: string;
+  /** dark = on purple banner; light = standalone white card */
+  variant?: "dark" | "light";
 };
 
 export function HrdLogWidget({
   callsign,
   lastQsoCount = 10,
   className,
+  variant = "light",
 }: HrdLogWidgetProps) {
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const normalized = callsign.trim().toUpperCase();
+  const isDark = variant === "dark";
 
   useEffect(() => {
-    if (!normalized) return;
-
     let cancelled = false;
     const container = document.getElementById("hrdlog");
     if (container) container.innerHTML = "www.hrdlog.net";
+
+    if (!normalized) {
+      setStatus("idle");
+      return () => {
+        cancelled = true;
+      };
+    }
 
     async function init() {
       setStatus("loading");
@@ -72,6 +81,10 @@ export function HrdLogWidget({
           throw new Error("HRDLOG unavailable");
         }
 
+        // Same embed pattern as HRDLOG.net:
+        // var ohrdlog = new HrdLog('CALLSIGN');
+        // ohrdlog.LoadByCallsign();
+        // ohrdlog.LoadLastQso(10);
         const ohrdlog = new window.HrdLog(normalized);
         ohrdlog.LoadByCallsign();
         ohrdlog.LoadLastQso(lastQsoCount);
@@ -88,38 +101,27 @@ export function HrdLogWidget({
     };
   }, [normalized, lastQsoCount]);
 
-  if (!normalized) return null;
-
   return (
     <div
       className={cn(
-        "rounded-xl bg-white/10 border border-white/15 overflow-hidden",
+        "hrdlog-embed rounded-2xl border overflow-hidden",
+        isDark ? "bg-white/10 border-white/15 text-white" : "bg-white border-gray-200 text-gray-800 shadow-sm",
         className
       )}
     >
-      <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-white/10">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-white/80">Log</p>
-        <a
-          href={`https://www.hrdlog.net/ViewLogbook.aspx?Callsign=${encodeURIComponent(normalized)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[10px] text-white/60 hover:text-white underline truncate"
-        >
-          HRDLOG.net · {normalized}
-        </a>
-      </div>
-      <div className="p-3 min-h-[120px] bg-white text-gray-800 text-xs overflow-x-auto">
-        {/* HRDLOG.net script target */}
-        <div id="hrdlog">www.hrdlog.net</div>
-        {status === "loading" && (
-          <p className="mt-2 text-gray-400">Loading last QSOs…</p>
-        )}
-        {status === "error" && (
-          <p className="mt-2 text-red-500">
-            Could not load HRDLOG. Check the callsign or try again later.
-          </p>
-        )}
-      </div>
+      {/* HRDLOG.net script start */}
+      <div id="hrdlog">www.hrdlog.net</div>
+      {/* HRDLOG.net script stop */}
+      {status === "loading" && (
+        <p className={cn("mt-2 text-xs", isDark ? "text-white/70" : "text-gray-400")}>
+          Loading last QSOs…
+        </p>
+      )}
+      {status === "error" && (
+        <p className="mt-2 text-xs text-red-500">
+          Could not load HRDLOG. Check the callsign or try again later.
+        </p>
+      )}
     </div>
   );
 }

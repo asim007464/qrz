@@ -82,8 +82,59 @@ export default function AdminUsersPage() {
       </div>
 
       {data && (
+        <>
+        <div className="admin-mobile-users">
+          {pageItems.map((u) => {
+            const profileLocation = [u.location, u.country].filter(Boolean).join(", ") || "—";
+            return (
+              <div key={u.id} className="admin-user-mobile-card panel">
+                <div className="admin-user-mobile-head">
+                  <div className="min-w-0">
+                    <strong>{u.name || "—"}</strong>
+                    <div className="section-sub no-cap">{u.callsign || "—"}</div>
+                    <div className="section-sub no-cap">{u.email}</div>
+                  </div>
+                  <span className={`support-status support-status--${u.is_blocked ? "open" : "resolved"}`}>
+                    {u.is_blocked ? "blocked" : "active"}
+                  </span>
+                </div>
+
+                <div className="admin-user-mobile-grid">
+                  <div><span>IP</span><strong className="no-cap">{u.last_ip || u.signup_ip || "—"}</strong></div>
+                  <div><span>IP Location</span><strong className="no-cap">{u.last_ip_location || "—"}</strong></div>
+                  <div><span>Profile Location</span><strong className="no-cap">{profileLocation}</strong></div>
+                  <div><span>Registered</span><strong className="no-cap">{u.created_at ? fmtUTC(u.created_at) : "—"}</strong></div>
+                </div>
+
+                <div className="admin-user-mobile-actions">
+                  <select
+                    className="admin-inline-select"
+                    value={u.role}
+                    disabled={busyId === u.id || (u.role === "admin" && !data.session.isSuperAdmin)}
+                    onChange={(e) => updateUser(u.id, { role: e.target.value })}
+                  >
+                    {ROLES.map((r) => (
+                      <option key={r} value={r} disabled={r === "admin" && !data.session.isSuperAdmin}>
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    disabled={busyId === u.id}
+                    onClick={() => updateUser(u.id, { is_blocked: !u.is_blocked })}
+                  >
+                    {u.is_blocked ? "Unblock" : "Block"}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
         <div className="panel admin-table-wrap">
-          <table className="admin-table">
+          <table className="admin-table admin-table--desktop-only">
             <thead>
               <tr>
                 <th>Name</th>
@@ -152,6 +203,7 @@ export default function AdminUsersPage() {
             <button type="button" className="btn btn-ghost btn-sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>Next</button>
           </div>
         </div>
+        </>
       )}
       {!data?.session.isSuperAdmin && (
         <p className="auth-hint" style={{ marginTop: 12, textAlign: "left" }}>

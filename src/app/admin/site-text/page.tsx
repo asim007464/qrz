@@ -103,7 +103,7 @@ export default function AdminSiteTextPage() {
       {error && <p className="auth-notice auth-notice--error">{error}</p>}
       {message && <p className="auth-notice auth-notice--success">{message}</p>}
 
-      <div className="admin-filters panel" style={{ flexWrap: "wrap", gap: 8 }}>
+      <div className="admin-filters panel admin-section-tabs">
         {SITE_COPY_SECTIONS.map((s) => (
           <button
             key={s.id}
@@ -117,10 +117,10 @@ export default function AdminSiteTextPage() {
       </div>
 
       {section && (
-        <div className="panel" style={{ marginTop: 16 }}>
-          <div className="admin-page-head" style={{ marginBottom: 16 }}>
+        <div className="panel admin-site-text-panel">
+          <div className="admin-page-head admin-site-text-head">
             <div>
-              <h2 style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 18 }}>
+              <h2 className="admin-site-text-title">
                 <FileText size={18} />
                 {section.label}
               </h2>
@@ -131,10 +131,10 @@ export default function AdminSiteTextPage() {
             </button>
           </div>
 
-          <div className="space-y-4" style={{ display: "grid", gap: 16 }}>
+          <div className="admin-site-text-fields">
             {section.fields.map((field) => (
-              <label key={field.key} className="field" style={{ display: "block" }}>
-                <span style={{ display: "block", marginBottom: 6, fontSize: 13, fontWeight: 600 }}>
+              <label key={field.key} className="field admin-site-text-field">
+                <span className="admin-site-text-label">
                   {field.label}
                 </span>
                 {field.multiline ? (
@@ -143,24 +143,23 @@ export default function AdminSiteTextPage() {
                     rows={3}
                     value={copy[field.key] ?? ""}
                     onChange={(e) => updateField(field.key, e.target.value)}
-                    style={{ width: "100%", minHeight: 84 }}
+                    style={{ minHeight: 84 }}
                   />
                 ) : (
                   <input
                     className="admin-filter-input no-cap"
                     value={copy[field.key] ?? ""}
                     onChange={(e) => updateField(field.key, e.target.value)}
-                    style={{ width: "100%" }}
                   />
                 )}
-                <span className="section-sub" style={{ display: "block", marginTop: 4, fontSize: 11 }}>
+                <span className="section-sub admin-site-text-key">
                   {field.key}
                 </span>
               </label>
             ))}
           </div>
 
-          <div style={{ marginTop: 20, display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <div className="admin-site-text-actions">
             <button type="button" className="btn btn-ghost btn-sm" onClick={resetSection}>
               Reset section
             </button>

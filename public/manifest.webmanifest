@@ -2,11 +2,20 @@
   "name": "QRZ — Social Network",
   "short_name": "QRZ",
   "description": "QRZ social network for QSL cards, CQ feed, and operator connections.",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#1f1230",
   "theme_color": "#2e1a47",
   "icons": [
+    {
+      "src": "/qrz-app-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/qrz-app-icon.png",
       "sizes": "512x512",

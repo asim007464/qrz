@@ -17,6 +17,8 @@ import { compressImageFile } from "@/lib/compressImage";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 
+const HRDLOG_CALLSIGN_RE = /^[A-Z0-9/-]{3,16}$/i;
+
 export default function EditProfilePage() {
   const router = useRouter();
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -27,6 +29,7 @@ export default function EditProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarBusy, setAvatarBusy] = useState(false);
   const [avatarError, setAvatarError] = useState("");
+  const [hrdlogError, setHrdlogError] = useState("");
   const [form, setForm] = useState({
     callsign: "",
     name: "",
@@ -46,6 +49,8 @@ export default function EditProfilePage() {
     hrdlog_callsign: "",
   });
   const avatarSrc = avatarUrl || avatarForCallsign(form.callsign || profile?.callsign || "qrz", profile?.avatar_url);
+
+  const normalizedHrdlogCallsign = form.hrdlog_callsign.trim().toUpperCase();
 
   useEffect(() => {
     if (authLoading) return;
@@ -88,6 +93,13 @@ export default function EditProfilePage() {
   }, [authLoading, isLoggedIn, router]);
 
   const save = async () => {
+    const hrdlogCallsign = normalizedHrdlogCallsign;
+    if (hrdlogCallsign && !HRDLOG_CALLSIGN_RE.test(hrdlogCallsign)) {
+      setHrdlogError("Enter a valid HRDLOG callsign, e.g. 9K2GV.");
+      return;
+    }
+
+    setHrdlogError("");
     setSaving(true);
     setSaved(false);
     const {
@@ -102,6 +114,7 @@ export default function EditProfilePage() {
       },
       body: JSON.stringify({
         ...form,
+        hrdlog_callsign: hrdlogCallsign,
         ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
         social_links: { website: form.website },
       }),
@@ -262,17 +275,22 @@ export default function EditProfilePage() {
         <Card className="space-y-3">
           <h3 className="font-semibold text-ham-purple">HRDLOG.net Log</h3>
           <p className="text-xs text-gray-500">
-            Enter your HRDLOG.net callsign to show your last QSOs on your profile banner.
+            Enter your HRDLOG.net callsign to show your last QSOs in the home page log box.
           </p>
           <Input
             label="HRDLOG Callsign"
             placeholder="e.g. 9K2GV"
             value={form.hrdlog_callsign}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, hrdlog_callsign: e.target.value.toUpperCase() }))
-            }
+            onChange={(e) => {
+              const value = e.target.value.toUpperCase();
+              setForm((f) => ({ ...f, hrdlog_callsign: value }));
+              if (!value.trim() || HRDLOG_CALLSIGN_RE.test(value.trim())) {
+                setHrdlogError("");
+              }
+            }}
             className="no-cap"
           />
+          {hrdlogError && <p className="text-xs text-red-500">{hrdlogError}</p>}
         </Card>
 
         <Card>

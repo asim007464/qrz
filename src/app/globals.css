@@ -190,6 +190,94 @@
 .brand-wordmark--nav { font-size: clamp(14px, 3vw, 20px); }
 .brand-wordmark--auth { font-size: clamp(18px, 2.5vw, 26px); }
 
+/* HRDLOG embed cleanup */
+.hrdlog-embed {
+  padding: 16px;
+}
+#hrdlog {
+  width: 100%;
+  min-height: 120px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  color: #111827;
+}
+#hrdlog form,
+#hrdlog > div:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+#hrdlog a { color: var(--ham-purple); }
+#hrdlog input[type="text"],
+#hrdlog input[type="search"] {
+  flex: 1 1 240px;
+  width: auto;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background: #fff;
+  color: #111827;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 14px;
+}
+#hrdlog input[type="submit"],
+#hrdlog button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 12px;
+  background: var(--ham-purple);
+  color: #fff;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+#hrdlog table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+}
+#hrdlog td,
+#hrdlog th {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+  color: #111827;
+}
+#hrdlog img {
+  display: none;
+}
+#hrdlog br {
+  display: none;
+}
+#hrdlog table tr:last-child td,
+#hrdlog table tr:last-child th {
+  border-bottom: 0;
+}
+@media (max-width: 640px) {
+  .hrdlog-embed {
+    padding: 12px;
+    border-radius: 16px;
+  }
+  #hrdlog form,
+  #hrdlog > div:first-child {
+    align-items: stretch;
+  }
+  #hrdlog input[type="text"],
+  #hrdlog input[type="search"],
+  #hrdlog input[type="submit"],
+  #hrdlog button {
+    width: 100%;
+  }
+}
+
 /* Auth pages */
 .auth-page {
   min-height: 100vh;
@@ -444,6 +532,22 @@
   padding: 6px 8px; color: var(--text); font: inherit; font-size: 12px;
 }
 .admin-pagination { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px; }
+.admin-mobile-users { display: none; }
+.admin-user-mobile-card { padding: 14px; margin-bottom: 12px; }
+.admin-user-mobile-head { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; }
+.admin-user-mobile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.admin-user-mobile-grid span,
+.admin-site-text-key { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+.admin-user-mobile-grid strong { display: block; font-size: 12px; }
+.admin-user-mobile-actions { display: flex; gap: 8px; margin-top: 14px; align-items: center; flex-wrap: wrap; }
+.admin-section-tabs { gap: 8px; }
+.admin-site-text-panel { margin-top: 16px; }
+.admin-site-text-head { margin-bottom: 16px; }
+.admin-site-text-title { display: flex; align-items: center; gap: 8px; font-size: 18px; margin: 0; }
+.admin-site-text-fields { display: grid; gap: 16px; }
+.admin-site-text-field { display: block; }
+.admin-site-text-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; }
+.admin-site-text-actions { margin-top: 20px; display: flex; gap: 8px; justify-content: flex-end; }
 .admin-support-list { display: flex; flex-direction: column; gap: 12px; }
 .admin-ai-suggestion {
   margin-top: 12px; padding: 12px; border-radius: 10px;
@@ -479,16 +583,33 @@
 
 @media (max-width: 1023px) {
   .admin-main { padding: 16px; }
+  .admin-quick-card--rich { align-items: flex-start; }
 }
 
 @media (max-width: 640px) {
   .admin-page-head { flex-direction: column; align-items: stretch; }
-  .admin-stats, .admin-stats--rich { grid-template-columns: 1fr 1fr; }
+  .admin-stats, .admin-stats--rich { grid-template-columns: 1fr; }
   .admin-stat--card strong { font-size: 22px; }
   .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px; }
   .admin-table { min-width: 900px; }
+  .admin-table--desktop-only { display: none; }
+  .admin-mobile-users { display: block; }
   .admin-filters { flex-direction: column; }
   .admin-filter-input { min-width: 0; width: 100%; }
+  .admin-filters select,
+  .admin-inline-select { width: 100%; }
+  .admin-pagination { flex-wrap: wrap; gap: 8px; }
+  .admin-user-mobile-grid { grid-template-columns: 1fr; }
+  .admin-user-mobile-actions { flex-direction: column; align-items: stretch; }
+  .admin-section-tabs {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-section-tabs .btn { white-space: nowrap; flex: 0 0 auto; }
+  .admin-site-text-actions { flex-direction: column; }
+  .admin-site-text-actions .btn { width: 100%; }
   .auth-otp { font-size: 20px; letter-spacing: 0.25em; }
   .contact-page { padding: 20px 12px 40px; }
   .contact-card { padding: 20px; }

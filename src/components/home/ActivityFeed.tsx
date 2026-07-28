@@ -151,7 +151,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 />
               </Link>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                   <Link
                     href={`/profile/${activity.user.callsign}`}
                     className="font-semibold text-ham-purple hover:underline"

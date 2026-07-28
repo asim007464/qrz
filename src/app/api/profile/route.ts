@@ -20,6 +20,8 @@ async function getAuthenticatedUser(request: Request) {
   return user ?? null;
 }
 
+const HRDLOG_CALLSIGN_RE = /^[A-Z0-9/-]{3,16}$/i;
+
 const PROFILE_FIELDS =
   "id, name, callsign, email, bio, avatar_url, location, country, itu_zone, active_band, active_frequency, active_mode, cq_zone, grid, station_setup, antenna_setup, qsl_info, bio_image, station_setup_image, antenna_setup_image, qsl_info_image, phone, website, qrz, hrdlog_callsign, latitude, longitude, on_air, background_image, social_links, role, is_blocked, profile_views, profile_searches, cards_received, cards_sent, created_at, updated_at";
 
@@ -107,6 +109,14 @@ export async function PATCH(request: Request) {
     if (body[key] !== undefined) {
       updates[column] = body[key];
     }
+  }
+
+  if (updates.hrdlog_callsign !== undefined) {
+    const raw = String(updates.hrdlog_callsign ?? "").trim().toUpperCase();
+    if (raw && !HRDLOG_CALLSIGN_RE.test(raw)) {
+      return NextResponse.json({ error: "Invalid HRDLOG callsign." }, { status: 400 });
+    }
+    updates.hrdlog_callsign = raw;
   }
 
   if (Object.keys(updates).length === 1) {

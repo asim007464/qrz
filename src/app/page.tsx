@@ -8,6 +8,7 @@ import { ProfileBanner } from "@/components/layout/ProfileBanner";
 import { ActivityFeed } from "@/components/home/ActivityFeed";
 import { NearbyOperators } from "@/components/home/NearbyOperators";
 import { DownloadAppCard } from "@/components/home/DownloadAppCard";
+import { HomeHrdLogBox } from "@/components/home/HomeHrdLogBox";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
@@ -93,9 +94,15 @@ export default function HomePage() {
         profile && <ProfileBanner user={displayUser} className="mb-4" />
       )}
 
+      {!loading && (
+        <HomeHrdLogBox
+          hrdlogCallsign={profile?.hrdlog_callsign}
+        />
+      )}
+
       <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
         <div>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
             <h2 className="text-xl sm:text-2xl font-bold tracking-wide uppercase text-gray-800">
               {t("home.feed_heading")}
             </h2>
