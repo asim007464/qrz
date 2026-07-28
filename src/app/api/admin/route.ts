@@ -36,7 +36,9 @@ export async function GET(request: Request) {
   ] = await Promise.all([
     admin
       .from("profiles")
-      .select("id, name, callsign, email, role, is_blocked, created_at")
+      .select(
+        "id, name, callsign, email, role, is_blocked, created_at, location, country, last_ip, last_ip_location, last_ip_at, signup_ip"
+      )
       .order("created_at", { ascending: false }),
     admin.from("support_messages").select("*").order("created_at", { ascending: false }),
     admin.from("qsl_templates").select("*").order("created_at", { ascending: false }),

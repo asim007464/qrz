@@ -9,10 +9,12 @@ import { checkPassword } from "@/lib/passwordUtils";
 import { getSafeRedirectPath } from "@/lib/authRedirect";
 import { MAX_IMAGE_BYTES, MAX_IMAGE_SIZE_LABEL } from "@/lib/constants";
 import { compressImageFile } from "@/lib/compressImage";
+import { useSiteCopy } from "@/hooks/useSiteCopy";
 
 type Step = "form" | "otp" | "done";
 
 export default function RegisterPage() {
+  const { t } = useSiteCopy();
   const [displayName, setDisplayName] = useState("");
   const [callsign, setCallsign] = useState("");
   const [email, setEmail] = useState("");
@@ -227,7 +229,7 @@ export default function RegisterPage() {
         <div className="auth-card panel">
           <div className="auth-done">
             <CheckCircle2 size={48} className="auth-done-icon" />
-            <h1>Welcome to QRZ!</h1>
+            <h1>{t("register.welcome_title")}</h1>
             <p className="section-sub" style={{ textAlign: "center", lineHeight: 1.6 }}>
               73, <strong>{displayName}</strong>! Your operator profile{" "}
               <strong className="no-cap">{callsign}</strong> is ready on the QRZ social network.
@@ -255,7 +257,7 @@ export default function RegisterPage() {
         <div className="auth-card panel">
           <div className="auth-header">
             <BrandMark link={false} size="auth" />
-            <h1>Verify Your Email</h1>
+            <h1>{t("register.verify_title")}</h1>
             <p className="section-sub">
               Enter the 6-digit code sent to <strong className="no-cap">{email}</strong>
             </p>
@@ -303,8 +305,8 @@ export default function RegisterPage() {
       <div className="auth-card panel">
         <div className="auth-header">
           <BrandMark link={false} size="auth" />
-          <h1>Create Your Account</h1>
-          <p className="section-sub">Join the QRZ social network</p>
+          <h1>{t("register.title")}</h1>
+          <p className="section-sub">{t("register.subtitle")}</p>
         </div>
 
         {error && <p role="alert" className="auth-notice auth-notice--error">{error}</p>}
@@ -427,7 +429,7 @@ export default function RegisterPage() {
           </label>
           <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
             {loading ? <Loader2 size={15} className="spin" /> : null}
-            {loading ? "Creating account…" : "Create account"}
+            {loading ? "Creating account…" : t("register.submit_cta")}
           </button>
         </form>
 

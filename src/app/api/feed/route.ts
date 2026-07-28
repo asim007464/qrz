@@ -62,9 +62,15 @@ export async function POST(request: Request) {
 
   const body = await request.json();
   const content = String(body.content ?? "").trim();
+  const imageUrl = body.image_url ?? body.imageUrl ?? null;
+  const image =
+    typeof imageUrl === "string" && imageUrl.trim() ? imageUrl.trim() : null;
 
-  if (!content) {
-    return NextResponse.json({ error: "Post content is required." }, { status: 400 });
+  if (!content && !image) {
+    return NextResponse.json(
+      { error: "Add text, an image, or both to publish." },
+      { status: 400 }
+    );
   }
 
   const admin = createAdminClient();
@@ -73,7 +79,7 @@ export async function POST(request: Request) {
     .insert({
       user_id: user.id,
       content,
-      image_url: body.image_url ?? body.imageUrl ?? null,
+      image_url: image,
     })
     .select("id, content, image_url, created_at, user_id")
     .single();

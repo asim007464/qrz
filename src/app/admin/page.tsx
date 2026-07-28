@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import {
-  Users, MessageSquare, CreditCard, ShieldAlert, ShieldCheck, Megaphone, Sparkles, Newspaper, Wallet,
+  Users, MessageSquare, CreditCard, ShieldAlert, ShieldCheck, Megaphone, Sparkles, Newspaper, Wallet, FileText,
 } from "lucide-react";
 import { adminFetch, useAdminData } from "@/components/admin/useAdminData";
 
@@ -151,6 +151,13 @@ export default function AdminDashboardPage() {
           <div>
             <strong>Support inbox</strong>
             <span>{data.stats.openSupport} open messages</span>
+          </div>
+        </Link>
+        <Link href="/admin/site-text" className="admin-quick-card panel admin-quick-card--rich">
+          <FileText size={20} />
+          <div>
+            <strong>Site text</strong>
+            <span>Edit headings & copy on all pages</span>
           </div>
         </Link>
         <Link href="/admin/broadcast" className="admin-quick-card panel admin-quick-card--rich">

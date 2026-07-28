@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import { useSiteCopy } from "@/hooks/useSiteCopy";
 import BrandMark from "@/components/BrandMark";
 
 export default function ContactPage() {
   const { user, profile } = useAuth();
+  const { t } = useSiteCopy();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
@@ -59,17 +61,17 @@ export default function ContactPage() {
       <div className="contact-inner">
         <header className="contact-header">
           <BrandMark link={false} size="auth" />
-          <h1>Contact QRZ</h1>
-          <p className="section-sub">Send us a message and we will get back to you as soon as we can.</p>
+          <h1>{t("contact.title")}</h1>
+          <p className="section-sub">{t("contact.subtitle")}</p>
         </header>
 
         <div className="contact-card panel">
           {sent ? (
             <div className="contact-sent">
-              <h2>Message sent</h2>
-              <p className="section-sub">Thanks for reaching out. We will get back to you as soon as we can.</p>
+              <h2>{t("contact.sent_title")}</h2>
+              <p className="section-sub">{t("contact.sent_body")}</p>
               <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSent(false)}>
-                Send another message
+                {t("contact.send_another")}
               </button>
             </div>
           ) : (

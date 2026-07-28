@@ -9,11 +9,13 @@ import { ActivityFeed } from "@/components/home/ActivityFeed";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useAuth } from "@/hooks/useAuth";
+import { useSiteCopy } from "@/hooks/useSiteCopy";
 import { fetchFeedItems } from "@/lib/feed";
 import type { ActivityItem } from "@/types";
 
 export default function CQFeedPage() {
   const { isLoggedIn } = useAuth();
+  const { t } = useSiteCopy();
   const [feedItems, setFeedItems] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,19 +37,17 @@ export default function CQFeedPage() {
 
   return (
     <AppShell>
-      <PageHeader title="CQ Feed" backHref="/" />
+      <PageHeader title={t("feed.title")} backHref="/" />
 
       <Card className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-ham-purple">Posts from operators worldwide</p>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Read the latest CQ calls, DX reports, and field updates — then add your own.
-          </p>
+          <p className="text-sm font-semibold text-ham-purple">{t("feed.subtitle")}</p>
+          <p className="text-xs text-gray-500 mt-0.5">{t("feed.description")}</p>
         </div>
         <Link href={isLoggedIn ? "/add/post" : "/login?next=/add/post"} className="shrink-0">
           <Button size="sm" className="w-full sm:w-auto inline-flex items-center gap-1.5">
             <PenSquare className="w-3.5 h-3.5" />
-            Make Post
+            {t("feed.make_post_cta")}
           </Button>
         </Link>
       </Card>
@@ -56,11 +56,11 @@ export default function CQFeedPage() {
         <p className="text-sm text-gray-500 py-8 text-center">Loading feed…</p>
       ) : feedItems.length === 0 ? (
         <Card className="text-center py-10 space-y-3">
-          <p className="text-sm text-gray-600">No posts yet. Be the first on the CQ Feed.</p>
+          <p className="text-sm text-gray-600">{t("feed.empty")}</p>
           <Link href={isLoggedIn ? "/add/post" : "/login?next=/add/post"}>
             <Button size="sm" className="inline-flex items-center gap-1.5">
               <PenSquare className="w-3.5 h-3.5" />
-              Make Post
+              {t("feed.make_post_cta")}
             </Button>
           </Link>
         </Card>

@@ -10,10 +10,12 @@ import Toast, { useToast } from "@/components/Toast";
 import { supabase } from "@/lib/supabase";
 import { getSafeRedirectPath } from "@/lib/authRedirect";
 import { formatAuthError } from "@/lib/authErrors";
+import { useSiteCopy } from "@/hooks/useSiteCopy";
 
 export default function LoginPage() {
   const router = useRouter();
   const { message, showToast, clear } = useToast();
+  const { t } = useSiteCopy();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
@@ -150,8 +152,8 @@ export default function LoginPage() {
         <div className="auth-card panel">
           <div className="auth-header">
             <BrandMark link={false} size="auth" />
-            <h1>Sign In To QRZ</h1>
-            <p className="section-sub">Sign in to access the QRZ social network. New users must register first.</p>
+            <h1>{t("login.title")}</h1>
+            <p className="section-sub">{t("login.subtitle")}</p>
           </div>
 
           {welcomeCallsign && (

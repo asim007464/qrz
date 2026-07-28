@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { AppIcon } from "@/components/AppIcon";
 import { cn } from "@/lib/utils";
+import { useSiteCopy } from "@/hooks/useSiteCopy";
 
 type DownloadAppCardProps = {
   className?: string;
@@ -16,6 +17,8 @@ const MOCK_IMAGE =
   "https://images.unsplash.com/photo-1513828583688-c52646db42da?w=400&q=80";
 
 export function DownloadAppCard({ className }: DownloadAppCardProps) {
+  const { t } = useSiteCopy();
+
   return (
     <Card
       padding={false}
@@ -25,12 +28,10 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
         <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-xs font-medium uppercase tracking-wider text-white/70">
-              Download the app
+              {t("home.download_eyebrow")}
             </p>
-            <h3 className="text-lg sm:text-xl font-bold mt-1">QRZ for iOS & Android</h3>
-            <p className="text-sm text-white/80 mt-2">
-              Upload your profile, share QSL cards, build connections, and track views/searches.
-            </p>
+            <h3 className="text-lg sm:text-xl font-bold mt-1">{t("home.download_title")}</h3>
+            <p className="text-sm text-white/80 mt-2">{t("home.download_body")}</p>
           </div>
 
           <div className="shrink-0 mx-auto sm:mx-0">
@@ -71,17 +72,17 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
       <div className="p-4 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
         <div className="flex items-center gap-3 text-sm text-gray-600">
           <AppIcon size={40} className="shrink-0 sm:hidden" />
-          <span>Get QRZ on your phone with the official app icon on your home screen.</span>
+          <span>{t("home.download_footer")}</span>
         </div>
         <div className="flex gap-2">
           <Link href="/download?platform=android" className="flex-1 sm:flex-none">
             <Button variant="primary" className="w-full">
-              Download Android
+              {t("home.download_android_cta")}
             </Button>
           </Link>
           <Link href="/download?platform=ios" className="flex-1 sm:flex-none">
             <Button variant="outline" className="w-full">
-              Download iOS
+              {t("home.download_ios_cta")}
             </Button>
           </Link>
         </div>

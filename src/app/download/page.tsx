@@ -1,20 +1,23 @@
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { AppIcon } from "@/components/AppIcon";
+import { useSiteCopy } from "@/hooks/useSiteCopy";
 
-type Props = {
-  searchParams?: { platform?: string };
-};
-
-export default function DownloadPage({ searchParams }: Props) {
-  const platform = searchParams?.platform;
+function DownloadPageContent() {
+  const searchParams = useSearchParams();
+  const platform = searchParams.get("platform") || undefined;
+  const { t } = useSiteCopy();
 
   return (
     <AppShell>
-      <PageHeader title="Download the App" backHref="/menu" />
+      <PageHeader title={t("download.title")} backHref="/menu" />
 
       <div className="space-y-4">
         <Card className="overflow-hidden p-0">
@@ -22,14 +25,12 @@ export default function DownloadPage({ searchParams }: Props) {
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <p className="text-xs font-medium uppercase tracking-widest text-white/70">
-                  QRZ Mobile
+                  {t("download.eyebrow")}
                 </p>
                 <h2 className="text-xl sm:text-2xl font-bold mt-1">
-                  Upload, share, connect, and manage your QSLs
+                  {t("download.headline")}
                 </h2>
-                <p className="text-sm text-white/80 mt-2">
-                  Install QRZ on your phone to access the QRZ social network on the go.
-                </p>
+                <p className="text-sm text-white/80 mt-2">{t("download.body")}</p>
               </div>
               <AppIcon size={72} className="shrink-0 shadow-lg border border-white/20" />
             </div>
@@ -42,18 +43,16 @@ export default function DownloadPage({ searchParams }: Props) {
               <AppIcon size={44} />
               <div>
                 <h3 className="font-semibold text-ham-purple text-sm uppercase tracking-widest">
-                  Android
+                  {t("download.android_title")}
                 </h3>
-                <p className="text-xs text-gray-500">QRZ for Android</p>
+                <p className="text-xs text-gray-500">{t("download.android_subtitle")}</p>
               </div>
             </div>
-            <p className="text-sm text-gray-600">
-              Download the QRZ APK from the website.
-            </p>
+            <p className="text-sm text-gray-600">{t("download.android_body")}</p>
             <div className="mt-4">
               <Link href="/download/android-apk">
                 <Button size="lg" className="w-full">
-                  Download APK
+                  {t("download.android_cta")}
                 </Button>
               </Link>
             </div>
@@ -67,18 +66,16 @@ export default function DownloadPage({ searchParams }: Props) {
               <AppIcon size={44} />
               <div>
                 <h3 className="font-semibold text-ham-purple text-sm uppercase tracking-widest">
-                  iPhone (iOS)
+                  {t("download.ios_title")}
                 </h3>
-                <p className="text-xs text-gray-500">QRZ for iOS</p>
+                <p className="text-xs text-gray-500">{t("download.ios_subtitle")}</p>
               </div>
             </div>
-            <p className="text-sm text-gray-600">
-              Download the QRZ app for iPhone from the website.
-            </p>
+            <p className="text-sm text-gray-600">{t("download.ios_body")}</p>
             <div className="mt-4">
               <Link href="/download/ios-ipa">
                 <Button variant="outline" size="lg" className="w-full">
-                  Download iOS
+                  {t("download.ios_cta")}
                 </Button>
               </Link>
             </div>
@@ -100,5 +97,20 @@ export default function DownloadPage({ searchParams }: Props) {
         </Card>
       </div>
     </AppShell>
+  );
+}
+
+export default function DownloadPage() {
+  return (
+    <Suspense
+      fallback={
+        <AppShell>
+          <PageHeader title="Download the App" backHref="/menu" />
+          <p className="text-sm text-gray-500">Loading…</p>
+        </AppShell>
+      }
+    >
+      <DownloadPageContent />
+    </Suspense>
   );
 }

@@ -12,6 +12,12 @@ export interface AdminUser {
   role: string;
   is_blocked: boolean;
   created_at: string;
+  location?: string | null;
+  country?: string | null;
+  last_ip?: string | null;
+  last_ip_location?: string | null;
+  last_ip_at?: string | null;
+  signup_ip?: string | null;
 }
 
 export interface AdminSupport {

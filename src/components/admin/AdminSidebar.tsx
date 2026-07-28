@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Users, MessageSquare, CreditCard, Megaphone,
-  Home, LogOut, Menu, X, BarChart3, Newspaper, Wallet,
+  Home, LogOut, Menu, X, BarChart3, Newspaper, Wallet, FileText,
 } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import { supabase } from "@/lib/supabase";
@@ -18,6 +18,7 @@ const adminLinks = [
   { href: "/admin/qsl", label: "QSL Cards", icon: Wallet },
   { href: "/admin/support", label: "Support", icon: MessageSquare },
   { href: "/admin/templates", label: "QSL Templates", icon: CreditCard },
+  { href: "/admin/site-text", label: "Site Text", icon: FileText },
   { href: "/admin/broadcast", label: "Broadcast", icon: Megaphone },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
 ];

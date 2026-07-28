@@ -12,10 +12,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { MAX_IMAGE_BYTES, MAX_IMAGE_SIZE_LABEL } from "@/lib/constants";
 import { compressImageFile } from "@/lib/compressImage";
+import { useSiteCopy } from "@/hooks/useSiteCopy";
 
 export default function MakePostPage() {
   const router = useRouter();
   const { isLoggedIn, profile, loading: authLoading } = useAuth();
+  const { t } = useSiteCopy();
   const fileRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -54,10 +56,12 @@ export default function MakePostPage() {
     })();
   };
 
+  const canPublish = Boolean(content.trim() || imageUrl);
+
   const publish = async () => {
     const text = content.trim();
-    if (!text) {
-      setError("Write something for your post.");
+    if (!text && !imageUrl) {
+      setError("Add text, an image, or both to publish.");
       return;
     }
 
@@ -102,7 +106,7 @@ export default function MakePostPage() {
   if (authLoading || !isLoggedIn) {
     return (
       <AppShell>
-        <PageHeader title="Make Post" backHref="/add" />
+        <PageHeader title={t("add_post.title")} backHref="/add" />
         <p className="text-sm text-gray-500">Loading…</p>
       </AppShell>
     );
@@ -110,7 +114,7 @@ export default function MakePostPage() {
 
   return (
     <AppShell>
-      <PageHeader title="Make Post" backHref="/add" />
+      <PageHeader title={t("add_post.title")} backHref="/add" />
 
       <Card className="space-y-4">
         <div>
@@ -121,9 +125,9 @@ export default function MakePostPage() {
             </span>
           </p>
           <Textarea
-            label="What's on the air?"
+            label={t("add_post.textarea_label")}
             rows={5}
-            placeholder="Share a CQ call, DX report, field day update…"
+            placeholder={t("add_post.placeholder")}
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
@@ -149,7 +153,7 @@ export default function MakePostPage() {
             className="w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-gray-200 py-4 text-sm font-medium text-gray-500 hover:border-ham-purple/40 hover:text-ham-purple hover:bg-ham-purple/5 transition-colors"
           >
             <ImagePlus className="w-4 h-4" />
-            Add photo
+            {t("add_post.add_photo")}
           </button>
         )}
 
@@ -172,9 +176,9 @@ export default function MakePostPage() {
             size="lg"
             className="flex-1"
             onClick={() => void publish()}
-            disabled={posting || !content.trim()}
+            disabled={posting || !canPublish}
           >
-            {posting ? "Publishing…" : "Publish to CQ Feed"}
+            {posting ? "Publishing…" : t("add_post.publish_cta")}
           </Button>
           <Button
             size="lg"

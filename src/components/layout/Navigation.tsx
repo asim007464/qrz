@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import BrandMark from "@/components/BrandMark";
 import { AppIcon } from "@/components/AppIcon";
 import { useAuth } from "@/hooks/useAuth";
+import { useSiteCopy } from "@/hooks/useSiteCopy";
 
 const navItems = [
   { href: "/", label: "QRZ", isBrand: true },
@@ -155,6 +156,7 @@ export function BottomNav() {
 export function DesktopSidebar() {
   const pathname = usePathname();
   const { canAccessAdmin, isLoggedIn } = useAuth();
+  const { t } = useSiteCopy();
 
   const sidebarItems = [
     { href: "/feed", icon: Home, label: "CQ Feed" },
@@ -176,7 +178,7 @@ export function DesktopSidebar() {
     <aside className="app-sidebar hidden md:flex flex-col w-56 lg:w-64 bg-ham-purple-dark text-white p-3 lg:p-4">
       <Link href="/" className="mb-6 lg:mb-8 px-2 block shrink-0">
         <BrandMark link={false} size="nav" className="h-10 w-auto max-w-[160px]" />
-        <p className="text-white/50 text-xs mt-2">QRZ Social Network</p>
+        <p className="text-white/50 text-xs mt-2">{t("global.brand_tagline")}</p>
       </Link>
 
       <nav className="flex-1 min-h-0 space-y-1 overflow-y-auto">

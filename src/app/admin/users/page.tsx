@@ -23,7 +23,11 @@ export default function AdminUsersPage() {
         !q ||
         u.name?.toLowerCase().includes(q) ||
         u.email?.toLowerCase().includes(q) ||
-        u.callsign?.toLowerCase().includes(q);
+        u.callsign?.toLowerCase().includes(q) ||
+        u.last_ip?.toLowerCase().includes(q) ||
+        u.last_ip_location?.toLowerCase().includes(q) ||
+        u.location?.toLowerCase().includes(q) ||
+        u.country?.toLowerCase().includes(q);
       const matchesRole = roleFilter === "all" || u.role === roleFilter;
       const matchesBlocked =
         blockedFilter === "all" ||
@@ -62,7 +66,7 @@ export default function AdminUsersPage() {
       <div className="admin-filters panel">
         <input
           className="admin-filter-input no-cap"
-          placeholder="Search name, email, callsign…"
+          placeholder="Search name, email, callsign, IP…"
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
         />
@@ -85,6 +89,9 @@ export default function AdminUsersPage() {
                 <th>Name</th>
                 <th>Callsign</th>
                 <th>Email</th>
+                <th>IP Address</th>
+                <th>IP Location</th>
+                <th>Profile Location</th>
                 <th>Role</th>
                 <th>Registered</th>
                 <th>Status</th>
@@ -92,11 +99,18 @@ export default function AdminUsersPage() {
               </tr>
             </thead>
             <tbody>
-              {pageItems.map((u) => (
+              {pageItems.map((u) => {
+                const profileLocation = [u.location, u.country].filter(Boolean).join(", ") || "—";
+                return (
                 <tr key={u.id}>
                   <td>{u.name || "—"}</td>
                   <td className="no-cap">{u.callsign || "—"}</td>
                   <td className="no-cap">{u.email}</td>
+                  <td className="no-cap" title={u.signup_ip ? `Signup IP: ${u.signup_ip}` : undefined}>
+                    {u.last_ip || u.signup_ip || "—"}
+                  </td>
+                  <td className="no-cap">{u.last_ip_location || "—"}</td>
+                  <td className="no-cap">{profileLocation}</td>
                   <td>
                     <select
                       className="admin-inline-select"
@@ -128,7 +142,8 @@ export default function AdminUsersPage() {
                     </button>
                   </td>
                 </tr>
-              ))}
+              );
+              })}
             </tbody>
           </table>
           <div className="admin-pagination">

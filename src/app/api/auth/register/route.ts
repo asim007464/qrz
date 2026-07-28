@@ -7,6 +7,7 @@ import { getAuthCallbackUrl } from "@/lib/siteUrl";
 import { enforceRateLimit } from "@/lib/rateLimit";
 import { geocodeLocation, parseCoords } from "@/lib/geocode";
 import { compactAuthMetadata } from "@/lib/authMetadata";
+import { resolveRequestIpGeo } from "@/lib/ipGeo";
 import { NextResponse } from "next/server";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -108,6 +109,9 @@ export async function POST(request: Request) {
       console.error("Unconfirm email error:", unconfirmError);
     }
 
+    const ipGeo = await resolveRequestIpGeo(request);
+    const nowIso = new Date().toISOString();
+
     const { error: profileError } = await supabase.from("profiles").upsert({
       id: userId,
       name: displayName,
@@ -125,6 +129,10 @@ export async function POST(request: Request) {
       latitude: coords?.latitude ?? null,
       longitude: coords?.longitude ?? null,
       role,
+      signup_ip: ipGeo?.ip ?? null,
+      last_ip: ipGeo?.ip ?? null,
+      last_ip_location: ipGeo?.location ?? null,
+      last_ip_at: ipGeo?.ip ? nowIso : null,
     });
 
     if (profileError) {

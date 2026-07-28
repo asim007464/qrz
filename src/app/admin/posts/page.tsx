@@ -90,7 +90,7 @@ export default function AdminPostsPage() {
                 {busyId === post.id ? "…" : "Delete"}
               </button>
             </div>
-            <p className="support-message-body">{post.content}</p>
+            {post.content ? <p className="support-message-body">{post.content}</p> : null}
             {post.image_url && (
               <div className="mt-2 rounded-xl overflow-hidden border border-gray-100 max-w-md">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

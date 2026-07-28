@@ -160,7 +160,9 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                   </Link>
                   <span className="text-xs text-gray-400">{activity.timestamp}</span>
                 </div>
-                <p className="text-sm text-gray-700 mt-1">{activity.content}</p>
+                {activity.content ? (
+                  <p className="text-sm text-gray-700 mt-1">{activity.content}</p>
+                ) : null}
                 {activity.image && (
                   <div className="mt-3 rounded-xl overflow-hidden">
                     {activity.image.startsWith("data:") ? (

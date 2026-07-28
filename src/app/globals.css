@@ -486,7 +486,7 @@
   .admin-stats, .admin-stats--rich { grid-template-columns: 1fr 1fr; }
   .admin-stat--card strong { font-size: 22px; }
   .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px; }
-  .admin-table { min-width: 560px; }
+  .admin-table { min-width: 900px; }
   .admin-filters { flex-direction: column; }
   .admin-filter-input { min-width: 0; width: 100%; }
   .auth-otp { font-size: 20px; letter-spacing: 0.25em; }
