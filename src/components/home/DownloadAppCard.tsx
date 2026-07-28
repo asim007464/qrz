@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { Download } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -75,16 +74,34 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
           <span>{t("home.download_footer")}</span>
         </div>
         <div className="flex gap-2">
-          <Link href="/download?platform=android" className="flex-1 sm:flex-none">
-            <Button variant="primary" className="w-full">
-              {t("home.download_android_cta")}
-            </Button>
-          </Link>
-          <Link href="/download?platform=ios" className="flex-1 sm:flex-none">
-            <Button variant="outline" className="w-full">
-              {t("home.download_ios_cta")}
-            </Button>
-          </Link>
+          <Button
+            variant="primary"
+            className="w-full sm:w-auto flex-1 sm:flex-none"
+            onClick={() => {
+              const a = document.createElement("a");
+              a.href = "/download/android-apk";
+              a.setAttribute("download", "QRZ.apk");
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            }}
+          >
+            {t("home.download_android_cta")}
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto flex-1 sm:flex-none"
+            onClick={() => {
+              const a = document.createElement("a");
+              a.href = "/download/ios-ipa";
+              a.setAttribute("download", "QRZ.ipa");
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            }}
+          >
+            {t("home.download_ios_cta")}
+          </Button>
         </div>
       </div>
     </Card>

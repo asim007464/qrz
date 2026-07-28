@@ -189,19 +189,17 @@ export const DEFAULT_SITE_COPY: SiteCopyMap = {
   "download.body": "Install QRZ on your phone to access the QRZ social network on the go.",
   "download.android_title": "Android",
   "download.android_subtitle": "QRZ for Android",
-  "download.android_body":
-    "Install QRZ on Android from Chrome. It opens full screen like a native app and stays on your home screen.",
+  "download.android_body": "Download the QRZ APK and install it on your Android phone.",
   "download.android_install_cta": "Install QRZ App",
   "download.android_cta": "Download APK",
   "download.ios_title": "iPhone (iOS)",
   "download.ios_subtitle": "QRZ for iOS",
-  "download.ios_body":
-    "Add QRZ to your iPhone home screen from Safari for quick access to the social network.",
+  "download.ios_body": "Download the QRZ app package for iPhone.",
   "download.ios_install_cta": "Add to Home Screen",
-  "download.ios_cta": "Download IPA",
+  "download.ios_cta": "Download iOS",
   "download.home_screen_title": "App icon on your home screen",
   "download.home_screen_body":
-    "After installing, the QRZ icon appears on your device like any other app. Use Install QRZ App on Android or Add to Home Screen on iPhone.",
+    "After installing, the QRZ icon appears on your device like any other app.",
 
   "contact.title": "Contact QRZ",
   "contact.subtitle": "Send us a message and we will get back to you as soon as we can.",

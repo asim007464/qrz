@@ -1,64 +1,39 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { AppIcon } from "@/components/AppIcon";
-import { InstallAppButton } from "@/components/InstallAppButton";
 import { useSiteCopy } from "@/hooks/useSiteCopy";
 
-type DownloadStatus = {
-  androidApk: boolean;
-  iosIpa: boolean;
-};
+function startDownload(href: string) {
+  const anchor = document.createElement("a");
+  anchor.href = href;
+  anchor.setAttribute("download", href.endsWith("ios-ipa") ? "QRZ.ipa" : "QRZ.apk");
+  anchor.rel = "noopener";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+}
 
 function DownloadPageContent() {
   const searchParams = useSearchParams();
   const platform = searchParams.get("platform") || undefined;
-  const missing = searchParams.get("missing");
   const { t } = useSiteCopy();
-  const [status, setStatus] = useState<DownloadStatus>({
-    androidApk: false,
-    iosIpa: false,
-  });
 
   useEffect(() => {
-    fetch("/api/app-download/status")
-      .then((res) => res.json())
-      .then((data: DownloadStatus) => setStatus(data))
-      .catch(() => {
-        // Keep defaults when status cannot be loaded.
-      });
-  }, []);
+    if (platform === "android") startDownload("/download/android-apk");
+    if (platform === "ios") startDownload("/download/ios-ipa");
+  }, [platform]);
 
   return (
     <AppShell>
       <PageHeader title={t("download.title")} backHref="/menu" />
 
       <div className="space-y-4">
-        {missing === "apk" && (
-          <Card className="p-4 border-amber-200 bg-amber-50">
-            <p className="text-sm text-amber-900">
-              No APK file is hosted yet. Use <strong>Install QRZ App</strong> below to add QRZ to
-              your home screen, or upload <code className="text-xs">public/downloads/QRZ.apk</code>{" "}
-              on the server for direct APK downloads.
-            </p>
-          </Card>
-        )}
-
-        {missing === "ipa" && (
-          <Card className="p-4 border-amber-200 bg-amber-50">
-            <p className="text-sm text-amber-900">
-              No IPA file is hosted yet. Use the iOS instructions below to add QRZ to your home
-              screen.
-            </p>
-          </Card>
-        )}
-
         <Card className="overflow-hidden p-0">
           <div className="gradient-purple p-5 text-white">
             <div className="flex items-start justify-between gap-4">
@@ -88,19 +63,15 @@ function DownloadPageContent() {
               </div>
             </div>
             <p className="text-sm text-gray-600">{t("download.android_body")}</p>
-            <div className="mt-4 space-y-3">
-              <InstallAppButton label={t("download.android_install_cta")} />
-              {status.androidApk && (
-                <Link href="/download/android-apk">
-                  <Button variant="outline" size="lg" className="w-full">
-                    {t("download.android_cta")}
-                  </Button>
-                </Link>
-              )}
+            <div className="mt-4">
+              <Button
+                size="lg"
+                className="w-full"
+                onClick={() => startDownload("/download/android-apk")}
+              >
+                {t("download.android_cta")}
+              </Button>
             </div>
-            {platform === "android" && (
-              <p className="text-xs text-gray-500 mt-3">Android link selected.</p>
-            )}
           </Card>
 
           <Card className="p-4">
@@ -114,36 +85,18 @@ function DownloadPageContent() {
               </div>
             </div>
             <p className="text-sm text-gray-600">{t("download.ios_body")}</p>
-            <div className="mt-4 space-y-3">
-              <InstallAppButton
-                label={t("download.ios_install_cta")}
+            <div className="mt-4">
+              <Button
                 variant="outline"
-              />
-              {status.iosIpa && (
-                <Link href="/download/ios-ipa">
-                  <Button variant="outline" size="lg" className="w-full">
-                    {t("download.ios_cta")}
-                  </Button>
-                </Link>
-              )}
+                size="lg"
+                className="w-full"
+                onClick={() => startDownload("/download/ios-ipa")}
+              >
+                {t("download.ios_cta")}
+              </Button>
             </div>
-            {platform === "ios" && (
-              <p className="text-xs text-gray-500 mt-3">iOS link selected.</p>
-            )}
           </Card>
         </div>
-
-        <Card className="p-4 flex items-center gap-4">
-          <AppIcon size={56} className="shrink-0 hidden sm:block" />
-          <div>
-            <h3 className="font-semibold text-ham-purple mb-1">
-              {t("download.home_screen_title")}
-            </h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {t("download.home_screen_body")}
-            </p>
-          </div>
-        </Card>
       </div>
     </AppShell>
   );
