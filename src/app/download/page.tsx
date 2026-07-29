@@ -76,6 +76,15 @@ function DownloadPageContent() {
             <p className="text-xs text-gray-500 mt-3">
               After download, open the APK and allow install from this browser if Android asks.
             </p>
+            <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
+              <p className="font-semibold mb-1">{t("download.play_protect_title")}</p>
+              <p className="text-xs leading-relaxed mb-2">{t("download.play_protect_body")}</p>
+              <ol className="list-decimal list-inside space-y-1 text-xs">
+                <li>{t("download.play_protect_step1")}</li>
+                <li>{t("download.play_protect_step2")}</li>
+                <li>{t("download.play_protect_step3")}</li>
+              </ol>
+            </div>
           </Card>
 
           <Card className="p-4">
