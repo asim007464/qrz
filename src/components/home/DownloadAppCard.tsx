@@ -88,20 +88,11 @@ export function DownloadAppCard({ className }: DownloadAppCardProps) {
           >
             {t("home.download_android_cta")}
           </Button>
-          <Button
-            variant="outline"
-            className="w-full sm:w-auto flex-1 sm:flex-none"
-            onClick={() => {
-              const a = document.createElement("a");
-              a.href = "/download/ios-ipa";
-              a.setAttribute("download", "QRZ.ipa");
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-            }}
-          >
-            {t("home.download_ios_cta")}
-          </Button>
+          <a href="/download?platform=ios" className="flex-1 sm:flex-none">
+            <Button variant="outline" className="w-full">
+              {t("home.download_ios_cta")}
+            </Button>
+          </a>
         </div>
       </div>
     </Card>

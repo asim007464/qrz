@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/Button";
 import { AppIcon } from "@/components/AppIcon";
 import { useSiteCopy } from "@/hooks/useSiteCopy";
 
-function startDownload(href: string) {
+function startDownload(href: string, filename: string) {
   const anchor = document.createElement("a");
   anchor.href = href;
-  anchor.setAttribute("download", href.endsWith("ios-ipa") ? "QRZ.ipa" : "QRZ.apk");
+  anchor.setAttribute("download", filename);
   anchor.rel = "noopener";
   document.body.appendChild(anchor);
   anchor.click();
@@ -25,8 +25,9 @@ function DownloadPageContent() {
   const { t } = useSiteCopy();
 
   useEffect(() => {
-    if (platform === "android") startDownload("/download/android-apk");
-    if (platform === "ios") startDownload("/download/ios-ipa");
+    if (platform === "android") {
+      startDownload("/download/android-apk", "QRZ.apk");
+    }
   }, [platform]);
 
   return (
@@ -67,11 +68,14 @@ function DownloadPageContent() {
               <Button
                 size="lg"
                 className="w-full"
-                onClick={() => startDownload("/download/android-apk")}
+                onClick={() => startDownload("/download/android-apk", "QRZ.apk")}
               >
                 {t("download.android_cta")}
               </Button>
             </div>
+            <p className="text-xs text-gray-500 mt-3">
+              After download, open the APK and allow install from this browser if Android asks.
+            </p>
           </Card>
 
           <Card className="p-4">
@@ -85,15 +89,13 @@ function DownloadPageContent() {
               </div>
             </div>
             <p className="text-sm text-gray-600">{t("download.ios_body")}</p>
-            <div className="mt-4">
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full"
-                onClick={() => startDownload("/download/ios-ipa")}
-              >
-                {t("download.ios_cta")}
-              </Button>
+            <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-600">
+              <p className="font-medium text-ham-purple mb-1">Add to Home Screen</p>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>Open Safari on iPhone.</li>
+                <li>Tap Share → Add to Home Screen.</li>
+                <li>Tap Add to install QRZ.</li>
+              </ol>
             </div>
           </Card>
         </div>

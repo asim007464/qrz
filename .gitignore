@@ -6,3 +6,10 @@ node_modules
 .env*.local
 
 /generated/prisma
+
+# APK packaging leftovers (keep public/downloads/QRZ.apk)
+public/downloads/_apk_tmp/
+public/downloads/*.zip
+public/downloads/*-unsigned.apk
+public/downloads/*.keystore
+public/downloads/pwabuilder-error.txt
