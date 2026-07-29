@@ -22,6 +22,8 @@ type HrdLogResponse = {
   error?: string;
 };
 
+const HRDLOG_CALLSIGN_RE = /^[A-Z0-9/-]{3,16}$/i;
+
 type HrdLogWidgetProps = {
   callsign: string;
   lastQsoCount?: number;
@@ -41,10 +43,11 @@ export function HrdLogWidget({
   const [qsos, setQsos] = useState<HrdLogQso[]>([]);
   const [logbookUrl, setLogbookUrl] = useState("");
   const normalized = callsign.trim().toUpperCase();
+  const isValidCallsign = HRDLOG_CALLSIGN_RE.test(normalized);
   const isDark = variant === "dark";
 
   useEffect(() => {
-    if (!normalized) {
+    if (!normalized || !isValidCallsign) {
       setStatus("idle");
       setQsos([]);
       setError("");
@@ -82,9 +85,9 @@ export function HrdLogWidget({
       cancelled = true;
       controller.abort();
     };
-  }, [normalized, lastQsoCount]);
+  }, [normalized, isValidCallsign, lastQsoCount]);
 
-  if (!normalized) return null;
+  if (!normalized || !isValidCallsign) return null;
 
   return (
     <div
