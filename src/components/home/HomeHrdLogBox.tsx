@@ -6,6 +6,7 @@ type HomeHrdLogBoxProps = {
 
 export function HomeHrdLogBox({ hrdlogCallsign }: HomeHrdLogBoxProps) {
   const resolvedCallsign = (hrdlogCallsign || "").trim().toUpperCase();
+  if (!resolvedCallsign) return null;
 
   return <HrdLogWidget callsign={resolvedCallsign} lastQsoCount={10} className="mb-4" />;
 }

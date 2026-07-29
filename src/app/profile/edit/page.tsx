@@ -275,7 +275,8 @@ export default function EditProfilePage() {
         <Card className="space-y-3">
           <h3 className="font-semibold text-ham-purple">HRDLOG.net Log</h3>
           <p className="text-xs text-gray-500">
-            Enter your HRDLOG.net callsign to show your last QSOs in the home page log box.
+            Enter your HRDLOG.net callsign (for example <span className="font-semibold">9K2GV</span>),
+            not the website address. Your last QSOs will appear on the home page.
           </p>
           <Input
             label="HRDLOG Callsign"

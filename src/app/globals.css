@@ -190,91 +190,43 @@
 .brand-wordmark--nav { font-size: clamp(14px, 3vw, 20px); }
 .brand-wordmark--auth { font-size: clamp(18px, 2.5vw, 26px); }
 
-/* HRDLOG embed cleanup */
+/* HRDLOG embed */
 .hrdlog-embed {
   padding: 16px;
 }
-#hrdlog {
-  width: 100%;
-  min-height: 120px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  color: #111827;
-}
-#hrdlog form,
-#hrdlog > div:first-child {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-#hrdlog a { color: var(--ham-purple); }
-#hrdlog input[type="text"],
-#hrdlog input[type="search"] {
-  flex: 1 1 240px;
-  width: auto;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  background: #fff;
-  color: #111827;
-  padding: 10px 14px;
-  font: inherit;
-  font-size: 14px;
-}
-#hrdlog input[type="submit"],
-#hrdlog button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 12px;
-  background: var(--ham-purple);
-  color: #fff;
-  padding: 10px 16px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-#hrdlog table {
+.hrdlog-embed table.hrdl_table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 14px;
   overflow: hidden;
+  min-width: 520px;
 }
-#hrdlog td,
-#hrdlog th {
+.hrdlog-embed table.hrdl_table th,
+.hrdlog-embed table.hrdl_table td {
   padding: 10px 12px;
   border-bottom: 1px solid #e5e7eb;
   font-size: 13px;
   color: #111827;
 }
-#hrdlog img {
-  display: none;
+.hrdlog-embed table.hrdl_table th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  background: #f9fafb;
 }
-#hrdlog br {
-  display: none;
+.hrdlog-embed table.hrdl_table tr.hrdl_even td {
+  background: #f9fafb;
 }
-#hrdlog table tr:last-child td,
-#hrdlog table tr:last-child th {
+.hrdlog-embed table.hrdl_table tr:last-child td {
   border-bottom: 0;
 }
 @media (max-width: 640px) {
   .hrdlog-embed {
     padding: 12px;
     border-radius: 16px;
-  }
-  #hrdlog form,
-  #hrdlog > div:first-child {
-    align-items: stretch;
-  }
-  #hrdlog input[type="text"],
-  #hrdlog input[type="search"],
-  #hrdlog input[type="submit"],
-  #hrdlog button {
-    width: 100%;
   }
 }
 
