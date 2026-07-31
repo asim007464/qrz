@@ -133,28 +133,28 @@ export default function AdminSiteTextPage() {
 
           <div className="admin-site-text-fields">
             {section.fields.map((field) => (
-              <label key={field.key} className="field admin-site-text-field">
-                <span className="admin-site-text-label">
-                  {field.label}
+              <label
+                key={field.key}
+                className={`admin-site-text-field${field.multiline ? " admin-site-text-field--wide" : ""}`}
+              >
+                <span className="admin-site-text-meta">
+                  <span className="admin-site-text-label">{field.label}</span>
+                  <code className="admin-site-text-key">{field.key}</code>
                 </span>
                 {field.multiline ? (
                   <textarea
-                    className="admin-filter-input no-cap"
-                    rows={3}
+                    className="admin-site-text-input no-cap"
+                    rows={4}
                     value={copy[field.key] ?? ""}
                     onChange={(e) => updateField(field.key, e.target.value)}
-                    style={{ minHeight: 84 }}
                   />
                 ) : (
                   <input
-                    className="admin-filter-input no-cap"
+                    className="admin-site-text-input no-cap"
                     value={copy[field.key] ?? ""}
                     onChange={(e) => updateField(field.key, e.target.value)}
                   />
                 )}
-                <span className="section-sub admin-site-text-key">
-                  {field.key}
-                </span>
               </label>
             ))}
           </div>

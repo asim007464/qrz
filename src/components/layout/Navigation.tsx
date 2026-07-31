@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandMark from "@/components/BrandMark";
-import { AppIcon } from "@/components/AppIcon";
 import { useAuth } from "@/hooks/useAuth";
 import { useSiteCopy } from "@/hooks/useSiteCopy";
 
@@ -117,11 +116,11 @@ export function BottomNav() {
                 href={item.href}
                 className={cn(
                   "flex flex-col items-center justify-center gap-0.5 px-2 sm:px-3 py-1.5 rounded-xl transition-colors min-w-0 flex-1 max-w-[4.5rem]",
-                  isActive ? "ring-2 ring-ham-accent/40 rounded-xl" : "opacity-80"
+                  isActive ? "text-ham-purple" : "text-gray-500"
                 )}
                 aria-label="QRZ Home"
               >
-                <AppIcon size={28} className="rounded-lg" />
+                <BrandMark link={false} size="tab" className="h-7 w-auto !rounded-none bg-transparent" />
                 <span
                   className={cn(
                     "text-[10px] font-medium truncate w-full text-center",
