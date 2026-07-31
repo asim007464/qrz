@@ -223,6 +223,19 @@
 .hrdlog-embed table.hrdl_table tr:last-child td {
   border-bottom: 0;
 }
+
+/* Dark variant inside purple profile banner */
+.hrdlog-embed.hrdlog-embed--dark {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.hrdlog-embed.hrdlog-embed--dark .hrdlog-embed__head {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.hrdlog-embed.hrdlog-embed--dark table.hrdl_table {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.2);
+}
 @media (max-width: 640px) {
   .hrdlog-embed {
     padding: 12px;

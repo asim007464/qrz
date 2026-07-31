@@ -94,12 +94,17 @@ export function HrdLogWidget({
       className={cn(
         "hrdlog-embed rounded-2xl border overflow-hidden",
         isDark
-          ? "bg-white/10 border-white/15 text-white"
+          ? "hrdlog-embed--dark bg-white/10 border-white/15 text-white"
           : "bg-white border-gray-200 text-gray-800 shadow-sm",
         className,
       )}
     >
-      <div className="flex items-center justify-between gap-3 px-1 pb-3 border-b border-gray-100 mb-3">
+      <div
+        className={cn(
+          "hrdlog-embed__head flex items-center justify-between gap-3 px-1 pb-3 mb-3",
+          isDark ? "border-b border-white/15" : "border-b border-gray-100",
+        )}
+      >
         <div>
           <p
             className={cn(

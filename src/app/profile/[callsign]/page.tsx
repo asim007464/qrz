@@ -4,7 +4,6 @@ import { Send, Eye, Search } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { ProfileBanner } from "@/components/layout/ProfileBanner";
-import { HrdLogWidget } from "@/components/profile/HrdLogWidget";
 import { SocialLinkButtons } from "@/components/profile/SocialLinks";
 import { ProfileFieldCard } from "@/components/profile/ProfileFieldCard";
 import { Card } from "@/components/ui/Card";
@@ -117,10 +116,6 @@ export default async function ProfilePage({ params }: Props) {
       <PageHeader title={user.callsign} backHref="/search" />
 
       <ProfileBanner user={user} className="mb-4" />
-
-      {user.hrdlogCallsign && (
-        <HrdLogWidget callsign={user.hrdlogCallsign} lastQsoCount={10} className="mb-4" />
-      )}
 
       {!isOwnProfile && (
         <div className="flex flex-col sm:flex-row gap-2 mb-4">

@@ -3,6 +3,8 @@ import { Globe, Radio } from "lucide-react";
 import type { UserProfile } from "@/types";
 import { Badge } from "@/components/ui/Badge";
 import { ProfileQRCode } from "@/components/profile/ProfileQRCode";
+import { HrdLogWidget } from "@/components/profile/HrdLogWidget";
+import { isValidHrdLogCallsign } from "@/lib/hrdlogEmbed";
 import { cn } from "@/lib/utils";
 
 type ProfileBannerProps = {
@@ -26,12 +28,16 @@ export function ProfileBanner({
       }
     : undefined;
 
+  const hrdlogCallsign = (user.hrdlogCallsign || "").trim().toUpperCase();
+  const showHrdlog = !compact && isValidHrdLogCallsign(hrdlogCallsign);
+
   return (
     <div
       className={cn(
         "relative overflow-hidden rounded-2xl text-white",
         !user.backgroundImage && "gradient-purple",
         compact ? "p-4" : "p-5 md:p-6",
+        showHrdlog && "min-h-[520px] md:min-h-[580px]",
         className
       )}
       style={bgStyle}
@@ -108,6 +114,17 @@ export function ProfileBanner({
               <p className="text-sm font-bold">{user.grid || "—"}</p>
             </div>
           </div>
+
+          {showHrdlog && (
+            <div className="mt-4">
+              <HrdLogWidget
+                callsign={hrdlogCallsign}
+                lastQsoCount={10}
+                variant="dark"
+                className="min-h-[280px] md:min-h-[320px]"
+              />
+            </div>
+          )}
 
           <div className="mt-4 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
             <div className="flex gap-2 flex-wrap">

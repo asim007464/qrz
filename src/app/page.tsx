@@ -8,7 +8,6 @@ import { ProfileBanner } from "@/components/layout/ProfileBanner";
 import { ActivityFeed } from "@/components/home/ActivityFeed";
 import { NearbyOperators } from "@/components/home/NearbyOperators";
 import { DownloadAppCard } from "@/components/home/DownloadAppCard";
-import { HomeHrdLogBox } from "@/components/home/HomeHrdLogBox";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
@@ -92,12 +91,6 @@ export default function HomePage() {
         </Card>
       ) : (
         profile && <ProfileBanner user={displayUser} className="mb-4" />
-      )}
-
-      {!loading && (
-        <HomeHrdLogBox
-          hrdlogCallsign={profile?.hrdlog_callsign}
-        />
       )}
 
       <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
