@@ -54,6 +54,12 @@ export const SITE_COPY_SECTIONS: SiteCopySection[] = [
       { key: "home.download_footer", label: "Download card footer", multiline: true },
       { key: "home.download_android_cta", label: "Download Android button" },
       { key: "home.download_ios_cta", label: "Download iOS button" },
+      { key: "home.embed_title", label: "Embedded log title" },
+      { key: "home.embed_body", label: "Embedded log description", multiline: true },
+      { key: "home.embed_field_label", label: "Embedded log field label" },
+      { key: "home.embed_placeholder", label: "Embedded log placeholder", multiline: true },
+      { key: "home.embed_cta", label: "Embedded log save button" },
+      { key: "home.embed_success", label: "Embedded log success message", multiline: true },
     ],
   },
   {
@@ -171,6 +177,14 @@ export const DEFAULT_SITE_COPY: SiteCopyMap = {
     "Get QRZ on your phone with the official app icon on your home screen.",
   "home.download_android_cta": "Download Android",
   "home.download_ios_cta": "Download iOS",
+  "home.embed_title": "Embedded Log",
+  "home.embed_body":
+    "Display your amateur radio log directly on your public profile.\n\nPaste the official embed code or public log link from your preferred logging service. Once saved, your log will be visible to visitors.\n\nOnly use public embed codes or links. Never paste passwords or private info.",
+  "home.embed_field_label": "Embed Code or Public Log URL",
+  "home.embed_placeholder": "Paste your embed code or public log URL here.",
+  "home.embed_cta": "Save and Display Log",
+  "home.embed_success":
+    "Your embedded log has been saved successfully and is now visible on your public profile.",
 
   "feed.title": "CQ Feed",
   "feed.subtitle": "Posts from operators worldwide",

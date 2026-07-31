@@ -9,7 +9,9 @@ import { ProfileFieldCard } from "@/components/profile/ProfileFieldCard";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ConnectButton } from "@/components/network/ConnectButton";
+import { MessageButton } from "@/components/messages/MessageButton";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import type { UserProfile } from "@/types";
 
 type Props = {
@@ -109,7 +111,16 @@ export default async function ProfilePage({ params }: Props) {
 
   if (!user) notFound();
 
-  const isOwnProfile = user.callsign === "K2ABC";
+  let isOwnProfile = false;
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
+    isOwnProfile = Boolean(authUser?.id && authUser.id === user.id);
+  } catch {
+    isOwnProfile = false;
+  }
 
   return (
     <AppShell>
@@ -120,7 +131,8 @@ export default async function ProfilePage({ params }: Props) {
       {!isOwnProfile && (
         <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <ConnectButton callsign={user.callsign} className="sm:flex-1" />
-          <Link href="/qsl/send" className="sm:flex-1">
+          <MessageButton callsign={user.callsign} />
+          <Link href={`/qsl/send?to=${encodeURIComponent(user.callsign)}`} className="sm:flex-1">
             <Button variant="outline" className="w-full flex items-center justify-center gap-2">
               <Send className="w-4 h-4" />
               Send QSL

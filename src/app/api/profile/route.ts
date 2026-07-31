@@ -115,7 +115,10 @@ export async function PATCH(request: Request) {
     const parsed = parseHrdLogCallsign(String(updates.hrdlog_callsign ?? ""));
     if (String(updates.hrdlog_callsign ?? "").trim() && !parsed) {
       return NextResponse.json(
-        { error: "Invalid HRDLOG callsign. Use a callsign like 9K2GV or paste the HRDLOG embed code." },
+        {
+          error:
+            "Invalid embed or log URL. Paste a public embed code/link that includes your callsign, or enter the callsign itself.",
+        },
         { status: 400 },
       );
     }

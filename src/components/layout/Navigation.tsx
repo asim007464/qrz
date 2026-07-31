@@ -16,6 +16,7 @@ import {
   Download,
   Shield,
   Rss,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandMark from "@/components/BrandMark";
@@ -162,6 +163,7 @@ export function DesktopSidebar() {
     { href: "/", icon: Home, label: "Home" },
     { href: "/feed", icon: Rss, label: "CQ Feed" },
     { href: "/search", icon: Search, label: "Search Users" },
+    { href: "/messages", icon: MessageSquare, label: "Messages" },
     { href: "/repeaters", icon: Radio, label: "Repeaters" },
     { href: "/card", icon: CreditCard, label: "My Digital Card" },
     { href: "/qsl", icon: Wallet, label: "QSL Wallet" },

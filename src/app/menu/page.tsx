@@ -15,6 +15,7 @@ import {
   LogIn,
   Radio,
   Download,
+  MessageSquare,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ProfileBanner } from "@/components/layout/ProfileBanner";
@@ -24,6 +25,7 @@ import { avatarForCallsign, EMPTY_PROFILE } from "@/lib/profileDefaults";
 
 const menuItems = [
   { href: "/profile/edit", icon: UserPen, label: "Edit Profile" },
+  { href: "/messages", icon: MessageSquare, label: "Messages" },
   { href: "/card", icon: CreditCard, label: "My Digital Card" },
   { href: "/repeaters", icon: Radio, label: "Repeaters" },
   { href: "/network", icon: Users, label: "My Network" },
