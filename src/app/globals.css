@@ -223,6 +223,33 @@
 .hrdlog-embed table.hrdl_table tr:last-child td {
   border-bottom: 0;
 }
+.hrdlog-table-scroll {
+  height: 400px;
+  max-height: 400px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 14px;
+}
+.hrdlog-table-scroll .hrdl_table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.hrdlog-table-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.hrdlog-table-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 999px;
+}
+.hrdlog-table-scroll::-webkit-scrollbar-thumb {
+  background: rgba(46, 26, 71, 0.45);
+  border-radius: 999px;
+}
+.hrdlog-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(46, 26, 71, 0.7);
+}
 
 /* Dark variant inside purple profile banner */
 .hrdlog-embed.hrdlog-embed--dark {
@@ -241,6 +268,72 @@
     padding: 12px;
     border-radius: 16px;
   }
+}
+
+/* Maidenhead grid locator map */
+.maidenhead-map {
+  position: relative;
+  background: #c8dff0;
+}
+.maidenhead-map__leaflet {
+  background: #c8dff0 !important;
+}
+.maidenhead-map__caption {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 500;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1f2937;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.maidenhead-label {
+  background: transparent !important;
+  border: 0 !important;
+}
+.maidenhead-label__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 6px #fff,
+    1px 1px 0 #fff,
+    -1px -1px 0 #fff;
+  pointer-events: none;
+  user-select: none;
+}
+.maidenhead-label__inner--field {
+  color: #dc2626;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+}
+.maidenhead-label__inner--square {
+  color: #111827;
+  font-size: 11px;
+  font-weight: 700;
+}
+.qrz-map-marker {
+  background: transparent !important;
+  border: 0 !important;
+}
+.qrz-map-marker__pin {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #2e1a47;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 /* Auth pages */

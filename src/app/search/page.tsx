@@ -75,7 +75,7 @@ export default function SearchPage() {
         <h2 className="text-xs font-bold tracking-widest uppercase text-gray-600 mb-2">
           All operators on map
         </h2>
-        <OperatorsMap operators={mapOperators} className="h-56 sm:h-64" />
+        <OperatorsMap operators={mapOperators} className="h-72 sm:h-96" />
       </div>
 
       <div className="space-y-2">

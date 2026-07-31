@@ -45,6 +45,11 @@ export default function HomePage() {
   const { isLoggedIn, profile, user, loading } = useAuth();
   const { t } = useSiteCopy();
   const [feedItems, setFeedItems] = useState<ActivityItem[]>([]);
+  const [hrdlogCallsign, setHrdlogCallsign] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setHrdlogCallsign(profile?.hrdlog_callsign || undefined);
+  }, [profile?.hrdlog_callsign]);
 
   useEffect(() => {
     let cancelled = false;
@@ -64,7 +69,10 @@ export default function HomePage() {
   const hasMore = feedItems.length > PREVIEW_COUNT;
 
   const displayUser = profile
-    ? profileFromAuth(profile, user?.id)
+    ? {
+        ...profileFromAuth(profile, user?.id),
+        hrdlogCallsign: hrdlogCallsign || profile.hrdlog_callsign || undefined,
+      }
     : EMPTY_PROFILE;
 
   return (
@@ -90,7 +98,14 @@ export default function HomePage() {
           </div>
         </Card>
       ) : (
-        profile && <ProfileBanner user={displayUser} className="mb-4" />
+        profile && (
+          <ProfileBanner
+            user={displayUser}
+            className="mb-4"
+            editableHrdlog
+            onHrdlogSaved={(cs) => setHrdlogCallsign(cs)}
+          />
+        )
       )}
 
       <div className="grid gap-4 lg:grid-cols-2 lg:items-start">

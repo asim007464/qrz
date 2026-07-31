@@ -15,6 +15,7 @@ import {
   Radio,
   Download,
   Shield,
+  Rss,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BrandMark from "@/components/BrandMark";
@@ -159,7 +160,8 @@ export function DesktopSidebar() {
   const { t } = useSiteCopy();
 
   const sidebarItems = [
-    { href: "/feed", icon: Home, label: "CQ Feed" },
+    { href: "/", icon: Home, label: "Home" },
+    { href: "/feed", icon: Rss, label: "CQ Feed" },
     { href: "/search", icon: Search, label: "Search Users" },
     { href: "/repeaters", icon: Radio, label: "Repeaters" },
     { href: "/card", icon: CreditCard, label: "My Digital Card" },
@@ -185,6 +187,7 @@ export function DesktopSidebar() {
         {sidebarItems.map((item) => {
           const isActive =
             pathname === item.href ||
+            (item.href === "/" && pathname === "/") ||
             (item.href === "/admin" && pathname.startsWith("/admin")) ||
             (item.href !== "/" && item.href !== "/admin" && pathname.startsWith(item.href));
 

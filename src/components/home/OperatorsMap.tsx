@@ -2,19 +2,19 @@
 
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import type { MapOperator } from "@/app/api/operators/route";
+import { MaidenheadGridLayer } from "@/components/home/MaidenheadGridLayer";
+import { latLngToMaidenhead } from "@/lib/maidenhead";
 import "leaflet/dist/leaflet.css";
 
-const markerIcon = L.icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
+const markerIcon = L.divIcon({
+  className: "qrz-map-marker",
+  html: `<div class="qrz-map-marker__pin"></div>`,
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
+  popupAnchor: [0, -10],
 });
 
 type OperatorsMapProps = {
@@ -24,7 +24,7 @@ type OperatorsMapProps = {
 
 export function OperatorsMap({ operators, className }: OperatorsMapProps) {
   const center = useMemo(() => {
-    if (operators.length === 0) return { lat: 20, lng: 0 };
+    if (operators.length === 0) return { lat: 50, lng: 5 };
     const lat =
       operators.reduce((sum, o) => sum + o.latitude, 0) / operators.length;
     const lng =
@@ -32,56 +32,68 @@ export function OperatorsMap({ operators, className }: OperatorsMapProps) {
     return { lat, lng };
   }, [operators]);
 
+  const initialZoom = useMemo(() => {
+    if (operators.length === 0) return 4;
+    if (operators.length === 1) return 6;
+    return 4;
+  }, [operators.length]);
+
   useEffect(() => {
-    // Leaflet needs explicit dimensions after mount in some layouts
     window.dispatchEvent(new Event("resize"));
   }, [operators.length]);
 
-  if (operators.length === 0) {
-    return (
-      <div
-        className={`flex items-center justify-center rounded-xl border border-gray-100 bg-gray-50 text-xs text-gray-500 ${className ?? "h-44"}`}
-      >
-        No operator locations yet. Register with your location to appear on the map.
-      </div>
-    );
-  }
-
   return (
-    <div className={`rounded-xl overflow-hidden border border-gray-100 z-0 ${className ?? "h-44"}`}>
+    <div
+      className={`maidenhead-map rounded-xl overflow-hidden border border-gray-200 z-0 ${className ?? "h-56"}`}
+    >
       <MapContainer
         center={[center.lat, center.lng]}
-        zoom={operators.length === 1 ? 6 : 2}
-        scrollWheelZoom={false}
-        className="h-full w-full"
-        style={{ minHeight: "176px" }}
+        zoom={initialZoom}
+        minZoom={2}
+        maxZoom={12}
+        scrollWheelZoom
+        zoomControl={false}
+        className="h-full w-full maidenhead-map__leaflet"
+        style={{ minHeight: "220px", background: "#c8dff0" }}
       >
+        <ZoomControl position="bottomright" />
+        {/* Light land / blue water, no street labels — like locator charts */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
         />
-        {operators.map((op) => (
-          <Marker
-            key={op.id}
-            position={[op.latitude, op.longitude]}
-            icon={markerIcon}
-          >
-            <Popup>
-              <div className="text-sm">
-                <p className="font-bold text-ham-purple">{op.callsign}</p>
-                <p className="text-gray-600">{op.name}</p>
-                <p className="text-xs text-gray-500">{op.location}</p>
-                <Link
-                  href={`/profile/${op.callsign}`}
-                  className="text-xs text-ham-purple underline mt-1 inline-block"
-                >
-                  View profile
-                </Link>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        <MaidenheadGridLayer />
+        {operators.map((op) => {
+          const grid = latLngToMaidenhead(op.latitude, op.longitude, 6);
+          return (
+            <Marker
+              key={op.id}
+              position={[op.latitude, op.longitude]}
+              icon={markerIcon}
+            >
+              <Popup>
+                <div className="text-sm">
+                  <p className="font-bold text-ham-purple">{op.callsign}</p>
+                  <p className="text-gray-600">{op.name}</p>
+                  <p className="text-xs text-gray-500">{op.location}</p>
+                  <p className="text-xs font-semibold text-gray-700 mt-1">
+                    Grid: {grid}
+                  </p>
+                  <Link
+                    href={`/profile/${op.callsign}`}
+                    className="text-xs text-ham-purple underline mt-1 inline-block"
+                  >
+                    View profile
+                  </Link>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
+      <div className="maidenhead-map__caption">
+        Maidenhead Grid Locator Map
+      </div>
     </div>
   );
 }

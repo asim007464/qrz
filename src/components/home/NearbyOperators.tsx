@@ -13,7 +13,7 @@ const OperatorsMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-44 rounded-xl border border-gray-100 bg-gray-50 animate-pulse" />
+      <div className="h-64 rounded-xl border border-gray-100 bg-gray-50 animate-pulse" />
     ),
   }
 );
@@ -64,9 +64,9 @@ export function NearbyOperators({ excludeId, userLat, userLng }: NearbyOperators
         </div>
 
         {loading ? (
-          <div className="h-44 rounded-xl bg-gray-50 animate-pulse mb-4" />
+          <div className="h-64 rounded-xl bg-gray-50 animate-pulse mb-4" />
         ) : (
-          <OperatorsMap operators={operators} className="h-44 sm:h-52 mb-4" />
+          <OperatorsMap operators={operators} className="h-64 sm:h-80 mb-4" />
         )}
 
         <div className="space-y-2">

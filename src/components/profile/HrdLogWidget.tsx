@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type HrdLogQso = {
@@ -32,9 +33,28 @@ type HrdLogWidgetProps = {
   variant?: "dark" | "light";
 };
 
+function matchesQuery(qso: HrdLogQso, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const haystack = [
+    qso.station,
+    qso.callsign,
+    qso.startTime,
+    qso.band,
+    qso.mode,
+    qso.rstRecv,
+    qso.rstSent,
+    qso.dxcc,
+    qso.comment,
+  ]
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(q);
+}
+
 export function HrdLogWidget({
   callsign,
-  lastQsoCount = 10,
+  lastQsoCount = 25,
   className,
   variant = "light",
 }: HrdLogWidgetProps) {
@@ -42,15 +62,22 @@ export function HrdLogWidget({
   const [error, setError] = useState("");
   const [qsos, setQsos] = useState<HrdLogQso[]>([]);
   const [logbookUrl, setLogbookUrl] = useState("");
+  const [search, setSearch] = useState("");
   const normalized = callsign.trim().toUpperCase();
   const isValidCallsign = HRDLOG_CALLSIGN_RE.test(normalized);
   const isDark = variant === "dark";
+
+  const filteredQsos = useMemo(
+    () => qsos.filter((qso) => matchesQuery(qso, search)),
+    [qsos, search],
+  );
 
   useEffect(() => {
     if (!normalized || !isValidCallsign) {
       setStatus("idle");
       setQsos([]);
       setError("");
+      setSearch("");
       return;
     }
 
@@ -133,6 +160,37 @@ export function HrdLogWidget({
         )}
       </div>
 
+      {(status === "ready" || status === "loading") && (
+        <div className="mb-3">
+          <label className="relative block">
+            <Search
+              className={cn(
+                "pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2",
+                isDark ? "text-white/55" : "text-gray-400",
+              )}
+            />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search DX, date, band, mode…"
+              className={cn(
+                "hrdlog-search w-full rounded-xl border pl-9 pr-3 py-2.5 text-sm outline-none transition",
+                isDark
+                  ? "border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:border-white/40 focus:bg-white/15"
+                  : "border-gray-200 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus:border-ham-purple focus:bg-white",
+              )}
+              aria-label="Search last QSOs"
+            />
+          </label>
+          {status === "ready" && search.trim() && (
+            <p className={cn("mt-1.5 text-[11px]", isDark ? "text-white/65" : "text-gray-500")}>
+              {filteredQsos.length} of {qsos.length} QSO{qsos.length === 1 ? "" : "s"} match
+            </p>
+          )}
+        </div>
+      )}
+
       {status === "loading" && (
         <p className={cn("text-xs", isDark ? "text-white/70" : "text-gray-400")}>
           Loading last QSOs…
@@ -151,8 +209,14 @@ export function HrdLogWidget({
         </p>
       )}
 
-      {status === "ready" && qsos.length > 0 && (
-        <div className="overflow-x-auto -mx-1">
+      {status === "ready" && qsos.length > 0 && filteredQsos.length === 0 && (
+        <p className={cn("text-xs", isDark ? "text-white/70" : "text-gray-500")}>
+          No QSOs match “{search.trim()}”.
+        </p>
+      )}
+
+      {status === "ready" && filteredQsos.length > 0 && (
+        <div className="hrdlog-table-scroll overflow-auto -mx-1">
           <table className="hrdl_table w-full text-left">
             <thead>
               <tr>
@@ -165,8 +229,11 @@ export function HrdLogWidget({
               </tr>
             </thead>
             <tbody>
-              {qsos.map((qso, index) => (
-                <tr key={`${qso.station}-${qso.startTime}-${index}`} className={index % 2 ? "hrdl_even" : "hrdl_odd"}>
+              {filteredQsos.map((qso, index) => (
+                <tr
+                  key={`${qso.station}-${qso.startTime}-${index}`}
+                  className={index % 2 ? "hrdl_even" : "hrdl_odd"}
+                >
                   <td className="font-semibold whitespace-nowrap">{qso.station || "—"}</td>
                   <td className="whitespace-nowrap">{qso.startTime || "—"}</td>
                   <td>{qso.band || "—"}</td>

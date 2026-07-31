@@ -14,7 +14,6 @@ import { FieldImagePicker } from "@/components/profile/FieldImagePicker";
 import { backgroundPresets, MAX_IMAGE_BYTES, MAX_IMAGE_SIZE_LABEL } from "@/lib/constants";
 import { avatarForCallsign } from "@/lib/profileDefaults";
 import { compressImageFile } from "@/lib/compressImage";
-import { parseHrdLogCallsign, isValidHrdLogCallsign } from "@/lib/hrdlogEmbed";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 
@@ -28,8 +27,6 @@ export default function EditProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarBusy, setAvatarBusy] = useState(false);
   const [avatarError, setAvatarError] = useState("");
-  const [hrdlogError, setHrdlogError] = useState("");
-  const [hrdlogEmbedPaste, setHrdlogEmbedPaste] = useState("");
   const [form, setForm] = useState({
     callsign: "",
     name: "",
@@ -46,11 +43,8 @@ export default function EditProfilePage() {
     qsl_info_image: null as string | null,
     phone: "",
     website: "",
-    hrdlog_callsign: "",
   });
   const avatarSrc = avatarUrl || avatarForCallsign(form.callsign || profile?.callsign || "qrz", profile?.avatar_url);
-
-  const normalizedHrdlogCallsign = form.hrdlog_callsign.trim().toUpperCase();
 
   useEffect(() => {
     if (authLoading) return;
@@ -85,7 +79,6 @@ export default function EditProfilePage() {
         qsl_info_image: data.qsl_info_image || null,
         phone: data.phone || "",
         website: links.website || data.website || "",
-        hrdlog_callsign: data.hrdlog_callsign || "",
       });
       setAvatarUrl(data.avatar_url || null);
     }
@@ -93,14 +86,6 @@ export default function EditProfilePage() {
   }, [authLoading, isLoggedIn, router]);
 
   const save = async () => {
-    const fromPaste = parseHrdLogCallsign(hrdlogEmbedPaste);
-    const hrdlogCallsign = (fromPaste || normalizedHrdlogCallsign).trim().toUpperCase();
-    if (hrdlogCallsign && !isValidHrdLogCallsign(hrdlogCallsign)) {
-      setHrdlogError("Enter a valid HRDLOG callsign (e.g. 9K2GV) or paste the full HRDLOG embed code.");
-      return;
-    }
-
-    setHrdlogError("");
     setSaving(true);
     setSaved(false);
     const {
@@ -115,22 +100,14 @@ export default function EditProfilePage() {
       },
       body: JSON.stringify({
         ...form,
-        hrdlog_callsign: hrdlogCallsign,
         ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
         social_links: { website: form.website },
       }),
     });
     setSaving(false);
     if (res.ok) {
-      if (hrdlogCallsign) {
-        setForm((f) => ({ ...f, hrdlog_callsign: hrdlogCallsign }));
-        setHrdlogEmbedPaste("");
-      }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } else {
-      const data = await res.json().catch(() => ({}));
-      setHrdlogError(data.error || "Could not save profile.");
     }
   };
 
@@ -278,68 +255,6 @@ export default function EditProfilePage() {
           <h3 className="font-semibold text-ham-purple">Contact</h3>
           <Input label="Phone" type="tel" value={form.phone} onChange={set("phone")} />
           <Input label="Website" value={form.website} onChange={set("website")} />
-        </Card>
-
-        <Card className="space-y-3">
-          <h3 className="font-semibold text-ham-purple">HRDLOG.net Log</h3>
-          <p className="text-xs text-gray-500">
-            Add your log from{" "}
-            <a
-              href="https://www.hrdlog.net/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-ham-purple underline"
-            >
-              HRDLOG.net
-            </a>
-            . Paste the full embed code <span className="font-semibold">or</span> enter only your
-            callsign (for example <span className="font-semibold">9K2GV</span>). The last QSOs will
-            show inside your purple profile banner.
-          </p>
-          <Textarea
-            label="Paste HRDLOG embed code (optional)"
-            placeholder={`<!-- HRDLOG.net script start -->
-<div id="hrdlog">www.hrdlog.net</div>
-<script src="https://www.hrdlog.net/hrdlog.js"></script>
-<script>
-var ohrdlog = new HrdLog('9K2GV');
-ohrdlog.LoadByCallsign();
-ohrdlog.LoadLastQso(10);
-</script>
-<!-- HRDLOG.net script stop -->`}
-            rows={7}
-            value={hrdlogEmbedPaste}
-            onChange={(e) => {
-              const value = e.target.value;
-              setHrdlogEmbedPaste(value);
-              const parsed = parseHrdLogCallsign(value);
-              if (parsed) {
-                setForm((f) => ({ ...f, hrdlog_callsign: parsed }));
-                setHrdlogError("");
-              }
-            }}
-            className="no-cap font-mono text-xs"
-          />
-          <Input
-            label="HRDLOG Callsign"
-            placeholder="e.g. 9K2GV"
-            value={form.hrdlog_callsign}
-            onChange={(e) => {
-              const value = e.target.value.toUpperCase();
-              setForm((f) => ({ ...f, hrdlog_callsign: value }));
-              if (!value.trim() || isValidHrdLogCallsign(value.trim())) {
-                setHrdlogError("");
-              }
-            }}
-            className="no-cap"
-          />
-          {hrdlogError && <p className="text-xs text-red-500">{hrdlogError}</p>}
-          {isValidHrdLogCallsign(form.hrdlog_callsign) && (
-            <p className="text-xs text-green-700">
-              Ready: last QSOs for <strong>{form.hrdlog_callsign.trim().toUpperCase()}</strong> will
-              appear in your purple banner after you save.
-            </p>
-          )}
         </Card>
 
         <Card>

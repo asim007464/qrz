@@ -4,6 +4,7 @@ import type { UserProfile } from "@/types";
 import { Badge } from "@/components/ui/Badge";
 import { ProfileQRCode } from "@/components/profile/ProfileQRCode";
 import { HrdLogWidget } from "@/components/profile/HrdLogWidget";
+import { HrdLogBannerSection } from "@/components/home/HrdLogBannerSection";
 import { isValidHrdLogCallsign } from "@/lib/hrdlogEmbed";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,9 @@ type ProfileBannerProps = {
   showQr?: boolean;
   compact?: boolean;
   className?: string;
+  /** Show HRDLOG setup form inside the purple home banner */
+  editableHrdlog?: boolean;
+  onHrdlogSaved?: (callsign: string) => void;
 };
 
 export function ProfileBanner({
@@ -19,6 +23,8 @@ export function ProfileBanner({
   showQr = true,
   compact = false,
   className,
+  editableHrdlog = false,
+  onHrdlogSaved,
 }: ProfileBannerProps) {
   const bgStyle = user.backgroundImage
     ? {
@@ -29,7 +35,9 @@ export function ProfileBanner({
     : undefined;
 
   const hrdlogCallsign = (user.hrdlogCallsign || "").trim().toUpperCase();
-  const showHrdlog = !compact && isValidHrdLogCallsign(hrdlogCallsign);
+  const showHrdlogReadOnly =
+    !compact && !editableHrdlog && isValidHrdLogCallsign(hrdlogCallsign);
+  const showHrdlogEditable = !compact && editableHrdlog;
 
   return (
     <div
@@ -37,7 +45,7 @@ export function ProfileBanner({
         "relative overflow-hidden rounded-2xl text-white",
         !user.backgroundImage && "gradient-purple",
         compact ? "p-4" : "p-5 md:p-6",
-        showHrdlog && "min-h-[520px] md:min-h-[580px]",
+        (showHrdlogReadOnly || showHrdlogEditable) && "min-h-[640px] md:min-h-[720px]",
         className
       )}
       style={bgStyle}
@@ -115,13 +123,21 @@ export function ProfileBanner({
             </div>
           </div>
 
-          {showHrdlog && (
+          {showHrdlogEditable && (
+            <HrdLogBannerSection
+              initialCallsign={hrdlogCallsign}
+              editable
+              onSaved={onHrdlogSaved}
+            />
+          )}
+
+          {showHrdlogReadOnly && (
             <div className="mt-4">
               <HrdLogWidget
                 callsign={hrdlogCallsign}
-                lastQsoCount={10}
+                lastQsoCount={25}
                 variant="dark"
-                className="min-h-[280px] md:min-h-[320px]"
+                className="min-h-[480px]"
               />
             </div>
           )}
